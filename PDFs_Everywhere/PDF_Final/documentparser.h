@@ -4,6 +4,7 @@
 #include <iostream>
 #include <podofo.h>
 #include <string>
+#include <dirent.h>
 
 using namespace PoDoFo;
 using namespace std;
@@ -14,6 +15,7 @@ public:
     DocumentParser();
     void createPdf();
     void openPdf(const char*);
+    void throughDirectory(const char*);
 private:
 };
 

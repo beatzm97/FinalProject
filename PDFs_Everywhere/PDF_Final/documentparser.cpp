@@ -125,3 +125,26 @@ void DocumentParser::openPdf(const char * fileIn)
         cout << "File: '" << fileIn << "' not supported" <<  endl << endl << endl;
     }
 }
+
+void DocumentParser::throughDirectory(const char* dirIn)
+{
+    struct dirent *pointDirent;
+    DIR *pointDir;
+    int count = 0;
+
+    cout << "Following path: " << dirIn << endl;
+
+    pointDir = opendir (dirIn);
+    if (pointDir == NULL)
+    {
+        cout << "Cannot open directory located at: " << dirIn << endl;
+    }
+    while ((pointDirent = readdir(pointDir)) != NULL)
+    {
+        const char* file = pointDirent->d_name;
+        cout << count << " " << file << endl;
+        count++;
+        openPdf(file);
+    }
+    closedir (pointDir);
+}

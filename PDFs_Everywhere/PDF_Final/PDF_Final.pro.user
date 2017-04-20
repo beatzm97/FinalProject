@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.2.1, 2017-04-20T14:43:22. -->
+<!-- Written by QtCreator 4.2.1, 2017-04-20T16:33:05. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -306,7 +306,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">PDF_Final2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/PDF_Final/PDF_Final.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">&quot;lingua5.htm&quot; &quot;BanduraReferences.html&quot; &quot;ProblemSolvingHermann.pdf&quot; &quot;The effects of tolerance for ambiguity on feedback seeking behavior.pdf&quot;</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/sampleFIles</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">PDF_Final.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug</value>
