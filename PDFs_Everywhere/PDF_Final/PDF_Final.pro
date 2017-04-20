@@ -10,4 +10,5 @@ SOURCES += main.cpp \
     documentparser.cpp
 
 HEADERS += \
-    documentparser.h
+    documentparser.h \
+    avl_tree.h
