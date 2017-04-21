@@ -13,9 +13,9 @@ class DocumentParser
 {
 public:
     DocumentParser();
-    void createPdf();
-    void openPdf(const char*);
-    void throughDirectory(const char*);
+    void createPdf();   // test function // can be removed later
+    void openPdf(const char*);  // parse through PDF
+    void throughDirectory(const char*); // traverses through a directory, extracts file names, passes to openPdf
 private:
 };
 
