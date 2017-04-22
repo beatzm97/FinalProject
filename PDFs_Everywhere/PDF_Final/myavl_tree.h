@@ -41,13 +41,15 @@ public:
     void remove();
 
     // remove specifed node and deallocates any attached nodes
-    // void remove(T valIn);
+    void remove(T);
 
     // returns depth of the whole tree
     int getDepth();
 
     // searches tree for an instance of T
     bool search(T); // true = instance found // false = instance not found
+    // returns specified T address if found
+    MyAVL_Node<T>* findLoc(T);  // * = found instance location
     // returns specified T if found
     T find(T);  // T = found instance
 
@@ -71,7 +73,9 @@ private:
     int depth;
 
     // return
-    MyAVL_Node<T>* add(MyAVL_Node*, T);
+    MyAVL_Node<T>* addFocus(MyAVL_Node<T>*, T);
+    MyAVL_Node<T>* removeFocus(MyAVL_Node<T>*, T);
+    void removeAll(MyAVL_Node<T>*);
 
 };
 
@@ -93,7 +97,7 @@ MyAVL_Tree<T>::MyAVL_Tree(T valIn): root(nullptr), recent(nullptr)
 {
     nodeCount = 1;
     depth = 1;
-    MyAVL_Node * temp = new MyAVL_Node(valIn);
+    MyAVL_Node<T> * temp = new MyAVL_Node<T>(valIn);
     root = temp;
     recent = temp;
 }
@@ -110,6 +114,17 @@ MyAVL_Tree<T>::MyAVL_Tree(const MyAVL_Tree & treeIn): root(nullptr), recent(null
     {
        // do add function first
     }
+}
+
+// destructor
+template <class T>
+MyAVL_Tree<T>::~MyAVL_Tree()
+{
+    removeAll(root);
+    root = nullptr;
+    recent = nullptr;
+    nodeCount = 0;
+    depth = 0;
 }
 
 // add function
@@ -153,7 +168,7 @@ void MyAVL_Tree<T>::add(T valIn)
     // average case: list with elements
     else
     {
-        guide = add(guide, valIn);
+        guide = addFocus(guide, valIn);
         if (valIn > guide->data)
         {
             guide->right = temp;
@@ -176,24 +191,24 @@ void MyAVL_Tree<T>::add(T valIn)
 // recursive function for add function
 // will focus on the necessary subtree
 template <class T>
-MyAVL_Node* MyAVL_Tree::add(MyAVL_Node * head, T valIn)
+MyAVL_Node<T>* MyAVL_Tree<T>::addFocus(MyAVL_Node<T>* head, T valIn)
 {
     if (valIn > head->data)
     {
         if (head->right != nullptr)
         {
-            add(head->right, valIn);
+            addFocus(head->right, valIn);
         }
         else
         {
             return head;
         }
     }
-    else if (valIn <head->data)
+    else if (valIn < head->data)
     {
         if(head->left != nullptr)
         {
-            add(head->left, valIn);
+            addFocus(head->left, valIn);
         }
         else
         {
@@ -205,3 +220,81 @@ MyAVL_Node* MyAVL_Tree::add(MyAVL_Node * head, T valIn)
         return head;
     }
 }
+
+// remove function
+// removes most recent addition to tree
+template <class T>
+void MyAVL_Tree<T>::remove()
+{
+    MyAVL_Node<T>* temp = recent;
+    // edge case: emtpy tree
+    // nothing can be removed
+    if (root  == nullptr)
+    {
+        cout << "ERROR: Empty tree: no element to remove" << endl;
+    }
+
+    // edge case: tree with on element
+    // root and recent point to the same node
+    else if (root->left == nullptr && root->right ==nullptr)
+    {
+        root = nullptr;
+        recent = nullptr;
+        delete temp;
+    }
+
+    // average case: tree with elements
+    else
+    {
+        if (temp->data > temp->back->data)
+        {
+            recent = temp->back;
+            temp->back->right = nullptr;
+            temp->back = nullptr;
+            delete temp;
+        }
+        else if (temp->data <temp->back->data)
+        {
+            recent = temp->back;
+            temp->back->left = nullptr;
+            temp->back = nullptr;
+            delete temp;
+        }
+    }
+}
+
+// recursive function for the remove function
+template <class T>
+void MyAVL_Tree<T>::removeAll(MyAVL_Node<T>* location)
+{
+    if (location->left != nullptr)
+    {
+        removeAll(location->left);
+    }
+    else if (location->right != nullptr)
+    {
+        removeAll(location->right);
+    }
+    else
+    {
+        if (location->back != nullptr)
+        {
+            if (location->data > location->back->data)
+            {
+                location->back->right = nullptr;
+                location->back = nullptr;
+            }
+            else if (location->data < location->back->data)
+            {
+                location->back->left = nullptr;
+                location->back = nullptr;
+            }
+        }
+        delete location;
+    }
+
+}
+
+// search function
+// searches tree for unique T
+// true = found, false = does not exist

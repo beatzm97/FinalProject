@@ -7,8 +7,10 @@ LIBS  += -L/usr/include/podofo \
     -lpodofo
 
 SOURCES += main.cpp \
-    documentparser.cpp
+    documentparser.cpp \
+    tests.cpp
 
 HEADERS += \
     documentparser.h \
-    avl_tree.h
+    catch.hpp \
+    myavl_tree.h
