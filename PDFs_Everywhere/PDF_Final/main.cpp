@@ -16,6 +16,6 @@ int main(int argc, char *argv[])
     tEnd = clock();
     float durationTicks = ((float)tEnd - (float)tStart);
     float durationSec = durationTicks/ CLOCKS_PER_SEC;
-    cout << durationSec;
+    cout << durationSec<< endl;
     return 0;
 }
