@@ -11,6 +11,6 @@ SOURCES += main.cpp \
     tests.cpp
 
 HEADERS += \
-    documentparser.h \
     catch.hpp \
+    documentparser.h \
     myavl_tree.h

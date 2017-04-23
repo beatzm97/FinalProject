@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = PDF_Final1.0.0
-DISTDIR = /home/coder/Documents/DataStructures/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug/.tmp/PDF_Final1.0.0
+DISTDIR = /home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug/.tmp/PDF_Final1.0.0
 LINK          = g++
 LFLAGS        = 
 LIBS          = $(SUBLIBS) -L/usr/include/podofo -lpodofo 
@@ -49,9 +49,11 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../PDF_Final/main.cpp \
-		../PDF_Final/documentparser.cpp 
+		../PDF_Final/documentparser.cpp \
+		../PDF_Final/tests.cpp 
 OBJECTS       = main.o \
-		documentparser.o
+		documentparser.o \
+		tests.o
 DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/linux.conf \
@@ -193,8 +195,11 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/exceptions.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/yacc.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/lex.prf \
-		../PDF_Final/PDF_Final.pro documentparser.h ../PDF_Final/main.cpp \
-		../PDF_Final/documentparser.cpp
+		../PDF_Final/PDF_Final.pro catch.hpp \
+		documentparser.h \
+		myavl_tree.h ../PDF_Final/main.cpp \
+		../PDF_Final/documentparser.cpp \
+		../PDF_Final/tests.cpp
 QMAKE_TARGET  = PDF_Final
 DESTDIR       = 
 TARGET        = PDF_Final
@@ -534,227 +539,16 @@ compiler_clean:
 
 ####### Compile
 
-main.o: ../PDF_Final/main.cpp ../PDF_Final/documentparser.h \
-		podofo/podofo.h \
-		podofo/podofo-base.h \
-		podofo/base/PdfVersion.h \
-		podofo/base/PdfDefines.h \
-		podofo/base/PdfCompilerCompat.h \
-		podofo/base/podofo_config.h \
-		podofo/base/PdfError.h \
-		podofo/base/podofoapi.h \
-		podofo/base/PdfMemoryManagement.h \
-		podofo/base/Pdf3rdPtyForwardDecl.h \
-		podofo/base/PdfArray.h \
-		podofo/base/PdfDataType.h \
-		podofo/base/PdfObject.h \
-		podofo/base/PdfName.h \
-		podofo/base/PdfParser.h \
-		podofo/base/PdfTokenizer.h \
-		podofo/base/PdfRefCountedBuffer.h \
-		podofo/base/PdfRefCountedInputDevice.h \
-		podofo/base/PdfVecObjects.h \
-		podofo/base/PdfReference.h \
-		podofo/base/PdfString.h \
-		podofo/base/PdfVariant.h \
-		podofo/base/PdfCanvas.h \
-		podofo/base/PdfColor.h \
-		podofo/base/PdfContentsTokenizer.h \
-		podofo/base/PdfData.h \
-		podofo/base/PdfDate.h \
-		podofo/base/PdfDictionary.h \
-		podofo/base/PdfEncodingFactory.h \
-		podofo/base/util/PdfMutex.h \
-		podofo/base/util/PdfMutexImpl_win32.h \
-		podofo/base/PdfDefinesPrivate.h \
-		podofo/base/PdfCompilerCompatPrivate.h \
-		podofo/base/util/PdfMutexImpl_pthread.h \
-		podofo/base/util/PdfMutexImpl_noop.h \
-		podofo/base/PdfEncoding.h \
-		podofo/base/PdfEncrypt.h \
-		podofo/base/PdfExtension.h \
-		podofo/base/PdfFileStream.h \
-		podofo/base/PdfStream.h \
-		podofo/base/PdfFilter.h \
-		podofo/base/PdfInputStream.h \
-		podofo/base/PdfOutputStream.h \
-		podofo/base/PdfImmediateWriter.h \
-		podofo/base/PdfWriter.h \
-		podofo/base/PdfOutputDevice.h \
-		podofo/base/PdfLocale.h \
-		podofo/base/PdfInputDevice.h \
-		podofo/base/PdfMemStream.h \
-		podofo/base/PdfObjectStreamParserObject.h \
-		podofo/base/PdfParserObject.h \
-		podofo/base/PdfRect.h \
-		podofo/base/PdfSigIncWriter.h \
-		podofo/base/PdfXRef.h \
-		podofo/base/PdfXRefStream.h \
-		podofo/base/PdfXRefStreamParserObject.h \
-		podofo/doc/PdfAcroForm.h \
-		podofo/doc/PdfElement.h \
-		podofo/doc/PdfAction.h \
-		podofo/doc/PdfAnnotation.h \
-		podofo/doc/PdfDestination.h \
-		podofo/doc/PdfCMapEncoding.h \
-		podofo/doc/PdfContents.h \
-		podofo/doc/PdfDifferenceEncoding.h \
-		podofo/doc/PdfDocument.h \
-		podofo/doc/PdfFontCache.h \
-		podofo/doc/PdfFont.h \
-		podofo/doc/PdfFontMetrics.h \
-		podofo/doc/PdfFontConfigWrapper.h \
-		podofo/doc/PdfInfo.h \
-		podofo/doc/PdfEncodingObjectFactory.h \
-		podofo/doc/PdfExtGState.h \
-		podofo/doc/PdfField.h \
-		podofo/doc/PdfFileSpec.h \
-		podofo/doc/PdfFontCID.h \
-		podofo/doc/PdfFontFactoryBase14Data.h \
-		podofo/doc/PdfFontMetricsBase14.h \
-		podofo/doc/PdfFontFactory.h \
-		podofo/doc/PdfFontMetricsFreetype.h \
-		podofo/doc/PdfFontMetricsObject.h \
-		podofo/doc/PdfFontSimple.h \
-		podofo/doc/PdfFontTrueType.h \
-		podofo/doc/PdfFontTTFSubset.h \
-		podofo/doc/PdfFontType1Base14.h \
-		podofo/doc/PdfFontType1.h \
-		podofo/doc/PdfFontType3.h \
-		podofo/doc/PdfFunction.h \
-		podofo/doc/PdfHintStream.h \
-		podofo/doc/PdfIdentityEncoding.h \
-		podofo/doc/PdfImage.h \
-		podofo/doc/PdfXObject.h \
-		podofo/doc/PdfMemDocument.h \
-		podofo/doc/PdfNamesTree.h \
-		podofo/doc/PdfOutlines.h \
-		podofo/doc/PdfPage.h \
-		podofo/doc/PdfPagesTreeCache.h \
-		podofo/doc/PdfPagesTree.h \
-		podofo/doc/PdfPainter.h \
-		podofo/doc/PdfPainterMM.h \
-		podofo/doc/PdfShadingPattern.h \
-		podofo/doc/PdfSigIncMemDocument.h \
-		podofo/doc/PdfSignOutputDevice.h \
-		podofo/doc/PdfSigIncSignatureField.h \
-		podofo/doc/PdfSignatureField.h \
-		podofo/doc/PdfSigIncPainter.h \
-		podofo/doc/PdfStreamedDocument.h \
-		podofo/doc/PdfTable.h \
-		podofo/doc/PdfTilingPattern.h
+main.o: ../PDF_Final/main.cpp ../PDF_Final/catch.hpp \
+		../PDF_Final/documentparser.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../PDF_Final/main.cpp
 
-documentparser.o: ../PDF_Final/documentparser.cpp ../PDF_Final/documentparser.h \
-		podofo/podofo.h \
-		podofo/podofo-base.h \
-		podofo/base/PdfVersion.h \
-		podofo/base/PdfDefines.h \
-		podofo/base/PdfCompilerCompat.h \
-		podofo/base/podofo_config.h \
-		podofo/base/PdfError.h \
-		podofo/base/podofoapi.h \
-		podofo/base/PdfMemoryManagement.h \
-		podofo/base/Pdf3rdPtyForwardDecl.h \
-		podofo/base/PdfArray.h \
-		podofo/base/PdfDataType.h \
-		podofo/base/PdfObject.h \
-		podofo/base/PdfName.h \
-		podofo/base/PdfParser.h \
-		podofo/base/PdfTokenizer.h \
-		podofo/base/PdfRefCountedBuffer.h \
-		podofo/base/PdfRefCountedInputDevice.h \
-		podofo/base/PdfVecObjects.h \
-		podofo/base/PdfReference.h \
-		podofo/base/PdfString.h \
-		podofo/base/PdfVariant.h \
-		podofo/base/PdfCanvas.h \
-		podofo/base/PdfColor.h \
-		podofo/base/PdfContentsTokenizer.h \
-		podofo/base/PdfData.h \
-		podofo/base/PdfDate.h \
-		podofo/base/PdfDictionary.h \
-		podofo/base/PdfEncodingFactory.h \
-		podofo/base/util/PdfMutex.h \
-		podofo/base/util/PdfMutexImpl_win32.h \
-		podofo/base/PdfDefinesPrivate.h \
-		podofo/base/PdfCompilerCompatPrivate.h \
-		podofo/base/util/PdfMutexImpl_pthread.h \
-		podofo/base/util/PdfMutexImpl_noop.h \
-		podofo/base/PdfEncoding.h \
-		podofo/base/PdfEncrypt.h \
-		podofo/base/PdfExtension.h \
-		podofo/base/PdfFileStream.h \
-		podofo/base/PdfStream.h \
-		podofo/base/PdfFilter.h \
-		podofo/base/PdfInputStream.h \
-		podofo/base/PdfOutputStream.h \
-		podofo/base/PdfImmediateWriter.h \
-		podofo/base/PdfWriter.h \
-		podofo/base/PdfOutputDevice.h \
-		podofo/base/PdfLocale.h \
-		podofo/base/PdfInputDevice.h \
-		podofo/base/PdfMemStream.h \
-		podofo/base/PdfObjectStreamParserObject.h \
-		podofo/base/PdfParserObject.h \
-		podofo/base/PdfRect.h \
-		podofo/base/PdfSigIncWriter.h \
-		podofo/base/PdfXRef.h \
-		podofo/base/PdfXRefStream.h \
-		podofo/base/PdfXRefStreamParserObject.h \
-		podofo/doc/PdfAcroForm.h \
-		podofo/doc/PdfElement.h \
-		podofo/doc/PdfAction.h \
-		podofo/doc/PdfAnnotation.h \
-		podofo/doc/PdfDestination.h \
-		podofo/doc/PdfCMapEncoding.h \
-		podofo/doc/PdfContents.h \
-		podofo/doc/PdfDifferenceEncoding.h \
-		podofo/doc/PdfDocument.h \
-		podofo/doc/PdfFontCache.h \
-		podofo/doc/PdfFont.h \
-		podofo/doc/PdfFontMetrics.h \
-		podofo/doc/PdfFontConfigWrapper.h \
-		podofo/doc/PdfInfo.h \
-		podofo/doc/PdfEncodingObjectFactory.h \
-		podofo/doc/PdfExtGState.h \
-		podofo/doc/PdfField.h \
-		podofo/doc/PdfFileSpec.h \
-		podofo/doc/PdfFontCID.h \
-		podofo/doc/PdfFontFactoryBase14Data.h \
-		podofo/doc/PdfFontMetricsBase14.h \
-		podofo/doc/PdfFontFactory.h \
-		podofo/doc/PdfFontMetricsFreetype.h \
-		podofo/doc/PdfFontMetricsObject.h \
-		podofo/doc/PdfFontSimple.h \
-		podofo/doc/PdfFontTrueType.h \
-		podofo/doc/PdfFontTTFSubset.h \
-		podofo/doc/PdfFontType1Base14.h \
-		podofo/doc/PdfFontType1.h \
-		podofo/doc/PdfFontType3.h \
-		podofo/doc/PdfFunction.h \
-		podofo/doc/PdfHintStream.h \
-		podofo/doc/PdfIdentityEncoding.h \
-		podofo/doc/PdfImage.h \
-		podofo/doc/PdfXObject.h \
-		podofo/doc/PdfMemDocument.h \
-		podofo/doc/PdfNamesTree.h \
-		podofo/doc/PdfOutlines.h \
-		podofo/doc/PdfPage.h \
-		podofo/doc/PdfPagesTreeCache.h \
-		podofo/doc/PdfPagesTree.h \
-		podofo/doc/PdfPainter.h \
-		podofo/doc/PdfPainterMM.h \
-		podofo/doc/PdfShadingPattern.h \
-		podofo/doc/PdfSigIncMemDocument.h \
-		podofo/doc/PdfSignOutputDevice.h \
-		podofo/doc/PdfSigIncSignatureField.h \
-		podofo/doc/PdfSignatureField.h \
-		podofo/doc/PdfSigIncPainter.h \
-		podofo/doc/PdfStreamedDocument.h \
-		podofo/doc/PdfTable.h \
-		podofo/doc/PdfTilingPattern.h
+documentparser.o: ../PDF_Final/documentparser.cpp ../PDF_Final/documentparser.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o documentparser.o ../PDF_Final/documentparser.cpp
+
+tests.o: ../PDF_Final/tests.cpp ../PDF_Final/catch.hpp \
+		../PDF_Final/myavl_tree.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tests.o ../PDF_Final/tests.cpp
 
 ####### Install
 

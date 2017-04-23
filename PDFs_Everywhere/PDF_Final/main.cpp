@@ -32,8 +32,10 @@ int main(int argc, char* const argv[])
     cout << durationSec<< endl;
     */
 
-    if (argc == true)
+    if (argc > 1)
     {
         return runCatchTests(argc, argv);
     }
 }
+
+

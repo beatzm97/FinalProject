@@ -33,18 +33,15 @@ public:
     // constructor
     MyAVL_Tree(T);
     // copy constructor
-    MyAVL_Tree(const MyAVL_Tree&);
+    MyAVL_Tree(const MyAVL_Tree&);  //
 
     // insert into AVL tree
     void add(T);
-    // removes most recent node
-    void remove();
-
-    // remove specifed node and deallocates any attached nodes
-    void remove(T);
 
     // returns depth of the whole tree
-    int getDepth();
+    int getDepth(); //
+    // returns total number of nodes in the tree
+    int getNodeCount();
 
     // searches tree for an instance of T
     bool search(T); // true = instance found // false = instance not found
@@ -56,15 +53,13 @@ public:
     // destructor
     ~MyAVL_Tree();
 
-    // overloaded [] operator?
-
     // overloaded assignment operator
     // copies contents of a tree into another tree
-    MyAVL_Tree<T>& operator=(MyAVL_Tree<T>&);
+    MyAVL_Tree<T>& operator=(MyAVL_Tree<T>&);   //
 
     // overloaded equivalence operator
     // checks equivalence of trees
-    bool operator==(MyAVL_Tree<T>&);
+    bool operator==(MyAVL_Tree<T>&);    //
 
 private:
     MyAVL_Node<T>* root;
@@ -74,9 +69,14 @@ private:
 
     // return
     MyAVL_Node<T>* addFocus(MyAVL_Node<T>*, T);
-    MyAVL_Node<T>* removeFocus(MyAVL_Node<T>*, T);
+
     void removeAll(MyAVL_Node<T>*);
 
+    bool search(MyAVL_Node<T>*, T);
+    MyAVL_Node<T>* findLoc(MyAVL_Node<T>*, T);
+    T find(MyAVL_Node<T>*, T);
+
+    void checkEquivalence(MyAVL_Node<T>*, MyAVL_Node<T>*, bool&);
 };
 
 #endif // AVL_TREE_H
@@ -133,7 +133,7 @@ template <class T>
 void MyAVL_Tree<T>::add(T valIn)
 {
     nodeCount++;
-    depth = int (log2(nodeCount));
+    depth = int (log2(nodeCount));  //c
 
     MyAVL_Node<T>* temp = new MyAVL_Node<T>(valIn);
     MyAVL_Node<T>* guide = root;
@@ -199,10 +199,6 @@ MyAVL_Node<T>* MyAVL_Tree<T>::addFocus(MyAVL_Node<T>* head, T valIn)
         {
             addFocus(head->right, valIn);
         }
-        else
-        {
-            return head;
-        }
     }
     else if (valIn < head->data)
     {
@@ -210,91 +206,232 @@ MyAVL_Node<T>* MyAVL_Tree<T>::addFocus(MyAVL_Node<T>* head, T valIn)
         {
             addFocus(head->left, valIn);
         }
-        else
-        {
-            return head;
-        }
     }
-    else
-    {
-        return head;
-    }
+    return head;
 }
 
-// remove function
-// removes most recent addition to tree
+// returns number of nodes in the tree
 template <class T>
-void MyAVL_Tree<T>::remove()
+int MyAVL_Tree<T>::getNodeCount()
 {
-    MyAVL_Node<T>* temp = recent;
-    // edge case: emtpy tree
-    // nothing can be removed
-    if (root  == nullptr)
-    {
-        cout << "ERROR: Empty tree: no element to remove" << endl;
-    }
-
-    // edge case: tree with on element
-    // root and recent point to the same node
-    else if (root->left == nullptr && root->right ==nullptr)
-    {
-        root = nullptr;
-        recent = nullptr;
-        delete temp;
-    }
-
-    // average case: tree with elements
-    else
-    {
-        if (temp->data > temp->back->data)
-        {
-            recent = temp->back;
-            temp->back->right = nullptr;
-            temp->back = nullptr;
-            delete temp;
-        }
-        else if (temp->data <temp->back->data)
-        {
-            recent = temp->back;
-            temp->back->left = nullptr;
-            temp->back = nullptr;
-            delete temp;
-        }
-    }
+    return nodeCount;
 }
 
-// recursive function for the remove function
+// recursive function for the destructor
 template <class T>
 void MyAVL_Tree<T>::removeAll(MyAVL_Node<T>* location)
 {
-    if (location->left != nullptr)
+    // edge case: empty tree
+    if (location == nullptr)
     {
-        removeAll(location->left);
+        cout << "ERROR: Empty tree, no elements to remove" << endl;
     }
-    else if (location->right != nullptr)
-    {
-        removeAll(location->right);
-    }
+    // edge case: one element
+    // average case: tree with elements
     else
     {
-        if (location->back != nullptr)
+        if (location->left != nullptr)
         {
-            if (location->data > location->back->data)
-            {
-                location->back->right = nullptr;
-                location->back = nullptr;
-            }
-            else if (location->data < location->back->data)
-            {
-                location->back->left = nullptr;
-                location->back = nullptr;
-            }
+            removeAll(location->left);
         }
-        delete location;
+        else if (location->right != nullptr)
+        {
+            removeAll(location->right);
+        }
+        else
+        {
+            if (location->back != nullptr)
+            {
+                if (location->data > location->back->data)
+                {
+                    location->back->right = nullptr;
+                    location->back = nullptr;
+                }
+                else if (location->data < location->back->data)
+                {
+                    location->back->left = nullptr;
+                    location->back = nullptr;
+                }
+            }
+            delete location;
+        }
     }
-
 }
 
 // search function
 // searches tree for unique T
 // true = found, false = does not exist
+template <class T>
+bool MyAVL_Tree<T>::search(T valIn)
+{
+    MyAVL_Node<T>* guide = root;
+    return search(root, valIn);
+}
+
+// recursive function for the search function
+template <class T>
+bool MyAVL_Tree<T>::search(MyAVL_Node<T>* head, T valIn)
+{
+    if (head == nullptr)
+    {
+        return false;
+    }
+    else
+    {
+        if (valIn == head->data)
+        {
+            return true;
+        }
+        else if (valIn > head->data)
+        {
+            if (head->right != nullptr)
+            {
+                search(head->right, valIn);
+            }
+        }
+        else if (valIn < head->data)
+        {
+            if (head->left != nullptr)
+            {
+                search(head->left, valIn);
+            }
+        }
+        return false;
+    }
+}
+
+// returns specified address of T if found
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::findLoc(T valIn)
+{
+    MyAVL_Node<T>* guide = root;
+    if (guide == nullptr)
+    {
+        return findLoc(root, valIn);
+    }
+    else
+    {
+        cout << "ERROR: Empty tree, cannot return an element" << endl;
+    }
+}
+
+// recurive function for findLoc function
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::findLoc(MyAVL_Node<T>* head, T valIn)
+{
+    if (valIn == head->data)
+    {
+        return head;
+    }
+    else if (valIn > head->data)
+    {
+        if (head->right != nullptr)
+        {
+            search(head->right, valIn);
+        }
+    }
+    else if (valIn < head->data)
+    {
+        if (head->left != nullptr)
+        {
+            search(head->left, valIn);
+        }
+    }
+    cout << "ERROR: Element not found" << endl;
+}
+
+// returns specified T if found
+template <class T>
+T MyAVL_Tree<T>::find(T valIn)
+{
+    MyAVL_Node<T>* guide = root;
+    if (guide == nullptr)
+    {
+        return find(guide, valIn);
+    }
+    else
+    {
+        cout << "ERROR: Empty tree, cannot return an element" << endl;
+    }
+}
+
+// recursive function for find function
+template <class T>
+T MyAVL_Tree<T>::find(MyAVL_Node<T>* head, T valIn)
+{
+    if (valIn == head->data)
+    {
+        return head->data;
+    }
+    else if (valIn > head->data)
+    {
+        if (head->right != nullptr)
+        {
+            search(head->right, valIn);
+        }
+    }
+    else if (valIn < head->data)
+    {
+        if (head->left != nullptr)
+        {
+            search(head->left, valIn);
+        }
+    }
+    cout << "ERROR: Element not found" << endl;
+}
+
+
+// equivalence operator
+// checks if two trees are equal
+template <class T>
+bool MyAVL_Tree<T>::operator ==(MyAVL_Tree<T>& treeIn)
+{
+    if (this->nodeCount != treeIn.nodeCount)
+    {
+        return false;
+    }
+    MyAVL_Node<T>* temp1 = this->root;
+    MyAVL_Node<T>* temp2 = treeIn.root;
+
+    if (temp1 == nullptr && temp2 == nullptr)
+    {
+        return true;
+    }
+
+    bool result = true;
+    checkEquivalence(temp1, temp2, result);
+    return result;
+}
+
+// recursive equality function for the equivalence operator function
+template <class T>
+void MyAVL_Tree<T>::checkEquivalence(MyAVL_Node<T>* head1, MyAVL_Node<T>* head2, bool& result)
+{
+    if (head1 != nullptr && head2 != nullptr)
+    {
+        if (head1->data != head2->data)
+        {
+            result = false;
+        }
+        if ((head1->left != nullptr && head2->left == nullptr) || (head1->left == nullptr && head2->left != nullptr))
+        {
+            result = false;
+        }
+        else if (head1->left != nullptr && head2->left != nullptr)
+        {
+            checkEquivalence(head1->left, head2->left, result);
+        }
+        if ((head1->right != nullptr && head2->right == nullptr) || (head1->right == nullptr && head2->right != nullptr))
+        {
+            result = false;
+        }
+        else if (head2->right != nullptr && head2->right != nullptr)
+        {
+            checkEquivalence(head1->right, head2->right, result);
+        }
+    }
+    else
+    {
+        result = false;
+    }
+}
