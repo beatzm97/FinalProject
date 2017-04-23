@@ -4,7 +4,7 @@
 #include "myavl_tree.h"
 
 // MyAVL_Tree test
-TEST_CASE("AVL Tree class", "[AVL Tree]")
+TEST_CASE("AVL Tree class, [AVL Tree]")
 {
     // creating test AVL trees
     MyAVL_Tree<int> intTree;
