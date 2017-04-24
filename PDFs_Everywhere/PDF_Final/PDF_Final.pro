@@ -8,9 +8,14 @@ LIBS  += -L/usr/include/podofo \
 
 SOURCES += main.cpp \
     documentparser.cpp \
-    tests.cpp
+    tests.cpp \
+    stopwords.cpp
 
 HEADERS += \
     catch.hpp \
     documentparser.h \
-    myavl_tree.h
+    myavl_tree.h \
+    stopwords.h \
+    avltree.h \
+    myadjacencylist.h \
+    mylinkedlist.h

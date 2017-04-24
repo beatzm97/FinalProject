@@ -50,10 +50,12 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../PDF_Final/main.cpp \
 		../PDF_Final/documentparser.cpp \
-		../PDF_Final/tests.cpp 
+		../PDF_Final/tests.cpp \
+		../PDF_Final/stopwords.cpp 
 OBJECTS       = main.o \
 		documentparser.o \
-		tests.o
+		tests.o \
+		stopwords.o
 DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/linux.conf \
@@ -197,9 +199,11 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/lex.prf \
 		../PDF_Final/PDF_Final.pro catch.hpp \
 		documentparser.h \
-		myavl_tree.h ../PDF_Final/main.cpp \
+		myavl_tree.h \
+		stopwords.h ../PDF_Final/main.cpp \
 		../PDF_Final/documentparser.cpp \
-		../PDF_Final/tests.cpp
+		../PDF_Final/tests.cpp \
+		../PDF_Final/stopwords.cpp
 QMAKE_TARGET  = PDF_Final
 DESTDIR       = 
 TARGET        = PDF_Final
@@ -540,15 +544,21 @@ compiler_clean:
 ####### Compile
 
 main.o: ../PDF_Final/main.cpp ../PDF_Final/catch.hpp \
-		../PDF_Final/documentparser.h
+		../PDF_Final/documentparser.h \
+		../PDF_Final/myavl_tree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../PDF_Final/main.cpp
 
-documentparser.o: ../PDF_Final/documentparser.cpp ../PDF_Final/documentparser.h
+documentparser.o: ../PDF_Final/documentparser.cpp ../PDF_Final/documentparser.h \
+		../PDF_Final/myavl_tree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o documentparser.o ../PDF_Final/documentparser.cpp
 
 tests.o: ../PDF_Final/tests.cpp ../PDF_Final/catch.hpp \
 		../PDF_Final/myavl_tree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tests.o ../PDF_Final/tests.cpp
+
+stopwords.o: ../PDF_Final/stopwords.cpp ../PDF_Final/stopwords.h \
+		../PDF_Final/myavl_tree.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o stopwords.o ../PDF_Final/stopwords.cpp
 
 ####### Install
 

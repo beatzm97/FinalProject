@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <math.h>
+#include <queue>
 
 using namespace std;
 
@@ -85,19 +86,23 @@ private:
     int depth;
 
     void removeAll(MyAVL_Node<T>*&);
-    int calcDepth();
 
     MyAVL_Node<T>* findLoc(MyAVL_Node<T>*, T);
     T find(MyAVL_Node<T>*, T);
+    void findDeepNode(MyAVL_Node<T>*, int, int&, MyAVL_Node<T>*&);
+    MyAVL_Node<T>* deepNode(MyAVL_Node<T>*);
 
     void assign(MyAVL_Node<T>*);
     void checkEquivalence(MyAVL_Node<T>*, MyAVL_Node<T>*, bool&);
 
     // for balancing
-    MyAVL_Node<T>* case1(MyAVL_Node<T>*);   // case 1
-    MyAVL_Node<T>* case2(MyAVL_Node<T>*);   // case 2
-    MyAVL_Node<T>* case3(MyAVL_Node<T>*);   // case 3
-    MyAVL_Node<T>* case4(MyAVL_Node<T>*);   // case 4
+    MyAVL_Node<T>* case1(MyAVL_Node<T>*, MyAVL_Node<T>*);   // case 1
+    MyAVL_Node<T>* case2(MyAVL_Node<T>*, MyAVL_Node<T>*);   // case 2
+    MyAVL_Node<T>* case3(MyAVL_Node<T>*, MyAVL_Node<T>*);   // case 3
+    MyAVL_Node<T>* case4(MyAVL_Node<T>*, MyAVL_Node<T>*);   // case 4
+
+    MyAVL_Node<T>* checkBalance(MyAVL_Node<T>*);
+    void checkBalanceNow(MyAVL_Node<T> *, MyAVL_Node<T>*&, MyAVL_Node<T>*&);
 
     int depthDiff(MyAVL_Node<T>*, int&);
     int getNodeDepth(MyAVL_Node<T>*);
@@ -209,7 +214,7 @@ void MyAVL_Tree<T>::add(T valIn)
                 root = balance(recent);
             }
         }
-        depth = calcDepth();
+        depth = getNodeDepth(root);
     }
     else
     {
@@ -305,44 +310,77 @@ MyAVL_Node<T>* MyAVL_Tree<T>::balanceInner(MyAVL_Node<T>* location, MyAVL_Node<T
     {
         int difference = 0;
         int balanceNum = depthDiff(innerHead, difference);
-        if (balanceNum > 1)
+        if (balanceNum == 2)
         {
             MyAVL_Node<T>* temp = location->in;
+            MyAVL_Node<T>* guide = temp;
             while (temp != innerHead->back)
             {
                 if (innerHead->data < innerHead->back->data && innerHead->data < temp->data)
                 {
+                    guide = temp;
                     temp = temp->left;
                 }
                 else
                 {
-                    innerHead = case2(innerHead);
+                    innerHead = case2(innerHead, guide);
+                    location->in = innerHead;
+                    MyAVL_Node<T>* attempt = deepNode(location->in);
+                    if (attempt !=  nullptr)
+                    {
+                        innerHead = attempt;
+                    }
+                    innerHead = balance(innerHead);
                     return innerHead;
                 }
             }
-            innerHead = case1(innerHead);
+            innerHead = case1(innerHead->back, guide);
+            location->in = innerHead;
+            MyAVL_Node<T>* attempt = deepNode(location->in);
+            if (attempt !=  nullptr)
+            {
+                innerHead = attempt;
+            }
+            innerHead = balance(innerHead);
             return innerHead;
         }
-        else  if (balanceNum < -1)
+        else  if (balanceNum == -2)
         {
             MyAVL_Node<T>* temp = location->in;
+            MyAVL_Node<T>* guide = temp;
             while (temp != innerHead->back)
             {
                 if (innerHead->data > innerHead->back->data && innerHead->data > temp->data)
                 {
+                    guide = temp;
                     temp = temp->right;
                 }
                 else
                 {
-                    innerHead = case3(innerHead);
+                    innerHead = case3(innerHead, guide);
+                    location->in = innerHead;
+                    MyAVL_Node<T>* attempt = deepNode(location->in);
+                    if (attempt !=  nullptr)
+                    {
+                        innerHead = attempt;
+                    }
+                    innerHead = balance(innerHead);
                     return innerHead;
                 }
             }
-            innerHead = case4(innerHead);
+            innerHead = case4(innerHead->back, guide);
+            location->in = innerHead;
+            MyAVL_Node<T>* attempt = deepNode(location->in);
+            if (attempt !=  nullptr)
+            {
+                innerHead = attempt;
+            }
+            innerHead = balance(innerHead);
             return innerHead;
         }
         else
         {
+            location->in = innerHead;
             innerHead = location->in;
         }
     }
@@ -367,69 +405,92 @@ MyAVL_Node<T>* MyAVL_Tree<T>::balance(MyAVL_Node<T>* head)
     {
         int difference = 0;
         int balanceNum = depthDiff(head, difference);
-        if (balanceNum > 1)
+        if (balanceNum == 2)
         {
             MyAVL_Node<T>* temp = root;
-            head = recent;
+            MyAVL_Node<T>* guide = temp;
             while (temp != head->back)
             {
                 if (head->data < head->back->data && head->data < temp->data)
                 {
+                    guide = temp;
                     temp = temp->left;
                 }
                 else
                 {
-                    head = case2(head);   // right child of left subtree
-                    return head;
+                    head = case2(head, guide);   // right child of left subtree
+                    root = head;
+                    root = checkBalance(root);
                 }
             }
-            head = case1(head);   // left child of left subtree
+            head = case1(head->back, guide);   // left child of left subtree
+            root = head;
+            MyAVL_Node<T>* attempt = deepNode(root);
+            if (attempt !=  nullptr)
+            {
+                head = attempt;
+            }
+            head = balance(head);
             return head;
         }
-        else if (balanceNum < -1)
+        else if (balanceNum == -2)
         {
             MyAVL_Node<T>* temp = root;
-            head = recent;
+            MyAVL_Node<T>* guide = temp;
             while (temp != head->back)
             {
                 if (head->data > head->back->data && head->data > temp->data)
                 {
+                    guide = temp;
                     temp = temp->right;
                 }
                 else
                 {
-                    head = case3(head); // left child of right subtree
+                    head = case3(head, guide); // left child of right subtree
+                    root = head;
+                    MyAVL_Node<T>* attempt = deepNode(root);
+                    if (attempt !=  nullptr)
+                    {
+                        head = attempt;
+                    }
+                    head = balance(head);
                     return head;
                 }
             }
-            head = case4(head); // right child of right subtree
+            head = case4(head->back, guide); // right child of right subtree
+            root = head;
+            MyAVL_Node<T>* attempt = deepNode(root);
+            if (attempt !=  nullptr)
+            {
+                head = attempt;
+            }
+            head = balance(head);
             return head;
         }
         else
         {
-            head = root;
+            head  = root;
+            return head;
         }
     }
-    return head;
 }
 
 // case1: left child,left subtree rotation
 template <class T>
-MyAVL_Node<T>* MyAVL_Tree<T>::case1(MyAVL_Node<T>* head)
+MyAVL_Node<T>* MyAVL_Tree<T>::case1(MyAVL_Node<T>* head, MyAVL_Node<T>* guide)
 {
-    MyAVL_Node<T>* temp = head->back;
-    head->back = temp->back;
-    if (temp->back != nullptr)
+    head->back = guide->back;
+    if (guide->back != nullptr)
     {
-        temp->back->left = head;
+        guide->back->left = head;
     }
-    temp->back = head;
-    temp->left = head->right;
+    guide->back = head;
+    guide->left = head->right;
     if (head->right != nullptr)
     {
-        head->right->back = temp;
+        head->right->back = guide;
     }
-    head->right = temp;
+    head->right = guide;
 
     while (head->back != nullptr)
     {
@@ -440,7 +501,7 @@ MyAVL_Node<T>* MyAVL_Tree<T>::case1(MyAVL_Node<T>* head)
 
 // case3: left child, right subtree rotation
 template <class T>
-MyAVL_Node<T>* MyAVL_Tree<T>::case3(MyAVL_Node<T>* head)
+MyAVL_Node<T>* MyAVL_Tree<T>::case3(MyAVL_Node<T>* head, MyAVL_Node<T>* guide)
 {
     MyAVL_Node<T>* temp = head->back;
     if (temp->left == nullptr)
@@ -457,6 +518,7 @@ MyAVL_Node<T>* MyAVL_Tree<T>::case3(MyAVL_Node<T>* head)
         head = temp;
         temp = temp->back;
     }
+
     // in correct format
     temp = temp->back;
     head->back->left = nullptr;
@@ -465,13 +527,13 @@ MyAVL_Node<T>* MyAVL_Tree<T>::case3(MyAVL_Node<T>* head)
     head->right = head->back;
     head->back = temp;
 
-    head = case4(head);
+    head = case4(head, guide);
     return head;
 }
 
 // case2: right child, left subtree rotation
 template <class T>
-MyAVL_Node<T>* MyAVL_Tree<T>::case2(MyAVL_Node<T>* head)
+MyAVL_Node<T>* MyAVL_Tree<T>::case2(MyAVL_Node<T>* head, MyAVL_Node<T>* guide)
 {
     MyAVL_Node<T>* temp = head->back;
     if (temp->right == nullptr)
@@ -497,32 +559,32 @@ MyAVL_Node<T>* MyAVL_Tree<T>::case2(MyAVL_Node<T>* head)
     head->left = head->back;
     head->back = temp;
 
-    head = case1(head);
+    head = case1(head, guide);
     return head;
 }
 
 // case4: right child, right subtree rotation
 template <class T>
-MyAVL_Node<T>* MyAVL_Tree<T>::case4(MyAVL_Node<T>* head)
+MyAVL_Node<T>* MyAVL_Tree<T>::case4(MyAVL_Node<T>* head,MyAVL_Node<T>* guide)
 {
-    MyAVL_Node<T>* temp = head->back;
-    head->back = temp->back;
-    if (temp->back != nullptr)
+    head->back = guide->back;
+    if (guide->back != nullptr)
     {
-        temp->back->right = head;
+        guide->back->right = head;
     }
-    temp->back = head;
-    temp->right = head->left;
+    guide->back = head;
+    guide->right = head->left;
     if (head->left != nullptr)
     {
-        head->left->back = temp;
+        head->left->back = guide;
     }
-    head->left = temp;
+    head->left = guide;
 
     while (head->back != nullptr)
     {
         head = head->back;
     }
+
     return head;
 }
 
@@ -546,6 +608,7 @@ int MyAVL_Tree<T>::depthDiff(MyAVL_Node<T>* head, int& difference)
     {
         return difference;
     }
+    return difference;
 }
 
 // calculates depth of specific node
@@ -575,23 +638,6 @@ template <class T>
 int MyAVL_Tree<T>::getDepth()
 {
     return depth;
-}
-
-// calculate depth of whole tree
-template <class T>
-int MyAVL_Tree<T>::calcDepth()
-{
-    int depthCount = 0;
-    MyAVL_Node<T>* temp = recent;
-    if (recent != nullptr)
-    {
-        while(temp != nullptr)
-        {
-            temp = temp->back;
-            depthCount++;
-        }
-    }
-    return depthCount;
 }
 
 // recursive function for the destructor
@@ -855,5 +901,60 @@ void MyAVL_Tree<T>::checkEquivalence(MyAVL_Node<T>* head1, MyAVL_Node<T>* head2,
     else
     {
         result = false;
+    }
+}
+
+// find the deepest node
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::deepNode(MyAVL_Node<T>* head)
+{
+    MyAVL_Node<T>* res = nullptr;
+    int maxDepth = 0;
+    int depthNow = 0;
+
+    if (head != nullptr)
+    {
+        findDeepNode(head, depthNow, maxDepth, res);
+    }
+    return res;
+}
+template <class T>
+void MyAVL_Tree<T>::findDeepNode(MyAVL_Node<T>* head, int depthNow, int &maxDepth, MyAVL_Node<T>* &res)
+{
+    if (head != nullptr)
+    {
+        findDeepNode(head->left, ++depthNow, maxDepth, res);
+
+        if (depthNow > maxDepth)
+        {
+            res = head;
+            maxDepth = depthNow;
+        }
+        findDeepNode(head->right, depthNow, maxDepth, res);
+    }
+}
+
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::checkBalance(MyAVL_Node<T>* head)
+{
+    MyAVL_Node<T>* key = root;
+    MyAVL_Node<T>* temp = nullptr;
+    checkBalanceNow(head, key, temp);
+    return temp;
+}
+template <class T>
+void MyAVL_Tree<T>::checkBalanceNow(MyAVL_Node<T>* head, MyAVL_Node<T>*& key, MyAVL_Node<T>*& temp)
+{
+    if (head != nullptr)
+    {
+        temp = balance(head);
+        if (temp != key)
+            return;
+        checkBalanceNow(head->left, key, temp);
+        if (temp != key)
+            return;
+        checkBalanceNow(head->right, key, temp);
+        if (temp != key)
+            return;
     }
 }

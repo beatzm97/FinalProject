@@ -14,25 +14,25 @@ int runCatchTests(int argc, char* const argv[])
 
 int main(int argc, char* const argv[])
 {
-    /*clock_t tStart, tEnd;
+    clock_t tStart, tEnd;
     tStart = clock();
     DocumentParser doc1;
+    doc1.stopWords(argv[2]);
     //doc1.createPdf();
-    */
     /*
     for (int i = 1; i < argc; i++)
     {
         doc1.openPdf(argv[i]);
     }*/
-    /*
+
     doc1.throughDirectory(argv[1]);
+
     tEnd = clock();
     float durationTicks = ((float)tEnd - (float)tStart);
     float durationSec = durationTicks/ CLOCKS_PER_SEC;
-    cout << durationSec<< endl;
-    */
+    cout << durationSec << " seconds" << endl;
 
-    if (true)
+    if (argc > 1)
     {
         return runCatchTests(argc, argv);
     }

@@ -5,6 +5,27 @@ DocumentParser::DocumentParser()
 
 }
 
+void DocumentParser::stopWords(const char* fileName)
+{
+    fileIn.open(fileName, ios::in);
+    {
+        if (!fileIn)
+        {
+            cout << fileName << " : File did not open" << endl;
+            exit (EXIT_FAILURE);
+        }
+        string word;
+        fileIn >> word;
+        while (!fileIn.eof())
+        {
+            stopWordsList.add(word);
+            fileIn >> word;
+        }
+    }
+    cout << "list created" << endl;
+    fileIn.close();
+}
+
 void DocumentParser::createPdf()
 {
     PdfStreamedDocument document("trythis.pdf");
