@@ -42,6 +42,7 @@ TEST_CASE("AVL Tree class, [AVL Tree]")
 
         intTree.add(-1);
         intTree.add(7);
+        intTree.traverse();
     }
     SECTION("case3 and case4")
     {
@@ -50,6 +51,21 @@ TEST_CASE("AVL Tree class, [AVL Tree]")
         intTree3.add(20);
         intTree3.add(13);
         intTree3.add(11);
+    }
+    SECTION("innerAVL case1 and case 2")
+    {
+        intTree3.addInner(10, 10);
+        intTree3.addInner(10, 15);
+        intTree3.addInner(10, 0);
+        intTree3.addInner(10, 5);
+        intTree3.addInner(10, 0);
+        intTree3.addInner(10, 10);
+        intTree3.addInner(10, 15);
+        intTree3.addInner(10, -1);
+        intTree3.addInner(10, 4);
+        MyAVL_Node<int>* here = intTree3.findLoc(10);
+        intTree3.traverseInner(here);
+        intTree3.traverseAll();
     }
 
     /*SECTION("getNodeCount")

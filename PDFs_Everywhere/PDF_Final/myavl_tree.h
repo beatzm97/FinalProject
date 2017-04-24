@@ -38,8 +38,13 @@ public:
     // insert into AVL tree
     void add(T);
 
+    // insert into Inner AVL tree
+    void addInner(T, T);
+
     // balance tree
     MyAVL_Node<T>* balance(MyAVL_Node<T>*);
+    // balance inner tree
+    MyAVL_Node<T>* balanceInner(MyAVL_Node<T>*, MyAVL_Node<T>*);
 
     // returns depth of the whole tree
     int getDepth(); //
@@ -48,10 +53,18 @@ public:
 
     // searches tree for an instance of T
     bool search(T); // true = instance found // false = instance not found
+    // searches inner tree for instance of T
+    bool searchInner(MyAVL_Node<T>*, T);    // true = found, false = not found
+
     // returns specified T address if found
     MyAVL_Node<T>* findLoc(T);  // * = found instance location
     // returns specified T if found
     T find(T);  // T = found instance
+
+    // traverse and print out data of the avl tree
+    void traverseAll();
+    void traverse();    // only traverses outer tree
+    void traverseInner(MyAVL_Node<T>*); // traverses inner tree at a specified node
 
     // destructor
     ~MyAVL_Tree();
@@ -71,7 +84,7 @@ private:
     int nodeCount;
     int depth;
 
-    void removeAll(MyAVL_Node<T>*);
+    void removeAll(MyAVL_Node<T>*&);
     int calcDepth();
 
     MyAVL_Node<T>* findLoc(MyAVL_Node<T>*, T);
@@ -88,6 +101,10 @@ private:
 
     int depthDiff(MyAVL_Node<T>*, int&);
     int getNodeDepth(MyAVL_Node<T>*);
+
+    void addInner(MyAVL_Node<T>*, T);
+
+    void traverse(MyAVL_Node<T>*, bool);
 
 };
 
@@ -198,6 +215,138 @@ void MyAVL_Tree<T>::add(T valIn)
     {
         cout << "ERROR: No duplicates allowed" << endl;
     }
+}
+
+// finds node location for adding inner AVL tree
+template <class T>
+void MyAVL_Tree<T>::addInner(T outerVal, T innerVal)
+{
+    if (search(outerVal) ==  true)
+    {
+        MyAVL_Node<T>* location = nullptr;
+        location = findLoc(outerVal);
+        addInner(location, innerVal);
+    }
+    else
+    {
+        cout << "ERROR: This value cannot be added" << endl;
+    }
+}
+
+// adds the inner node to the inner AVL tree
+template <class T>
+void MyAVL_Tree<T>::addInner(MyAVL_Node<T>* location, T innerVal)
+{
+    if (searchInner(location->in, innerVal) == false)
+    {
+        MyAVL_Node<T>* temp = new MyAVL_Node<T>(innerVal);
+        MyAVL_Node<T>* guide = location->in;
+        MyAVL_Node<T>* head = guide;
+        // edge case: inner tree is empty
+        if (guide == nullptr)
+        {
+            location->in = temp;
+            //temp->back = location->in;
+        }
+        // edge case: inner tree with one element
+        // average case: tree with elements
+        else
+        {
+            while (guide != nullptr)
+            {
+                if (innerVal > guide->data)
+                {
+                    head = guide;
+                    guide = guide->right;
+                }
+                else if (innerVal < guide->data)
+                {
+                    head = guide;
+                    guide = guide->left;
+                }
+            }
+            if (innerVal > head->data)
+            {
+                head->right = temp;
+                temp->back = head;
+                location->in = balanceInner(location, temp);
+            }
+            else if (innerVal < head->data)
+            {
+                head->left = temp;
+                temp->back = head;
+                location->in = balanceInner(location, temp);
+            }
+        }
+    }
+    else
+    {
+        // increase frequency so frequency should already be one
+        // set frequency to 1 in the above if statement
+        cout << "ERROR: No duplicates allowed" << endl;
+    }
+}
+
+// checks balance of inner tree
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::balanceInner(MyAVL_Node<T>* location, MyAVL_Node<T>* innerHead)
+{
+    if(location->in == nullptr)
+    {
+        innerHead = location->in;
+        return innerHead;
+    }
+    else if (location->in->left == nullptr && location->in->right == nullptr)
+    {
+        innerHead = location->in;
+        return innerHead;
+    }
+    else
+    {
+        int difference = 0;
+        int balanceNum = depthDiff(innerHead, difference);
+        if (balanceNum > 1)
+        {
+            MyAVL_Node<T>* temp = location->in;
+            while (temp != innerHead->back)
+            {
+                if (innerHead->data < innerHead->back->data && innerHead->data < temp->data)
+                {
+                    temp = temp->left;
+                }
+                else
+                {
+                    innerHead = case2(innerHead);
+                    return innerHead;
+                }
+            }
+            innerHead = case1(innerHead);
+            return innerHead;
+        }
+        else  if (balanceNum < -1)
+        {
+            MyAVL_Node<T>* temp = location->in;
+            while (temp != innerHead->back)
+            {
+                if (innerHead->data > innerHead->back->data && innerHead->data > temp->data)
+                {
+                    temp = temp->right;
+                }
+                else
+                {
+                    innerHead = case3(innerHead);
+                    return innerHead;
+                }
+            }
+            innerHead = case4(innerHead);
+            return innerHead;
+        }
+        else
+        {
+            innerHead = location->in;
+        }
+    }
+    return innerHead;
 }
 
 // checks balance of tree
@@ -403,7 +552,6 @@ int MyAVL_Tree<T>::depthDiff(MyAVL_Node<T>* head, int& difference)
 template <class T>
 int MyAVL_Tree<T>::getNodeDepth(MyAVL_Node<T>* head)
 {
-
     int nodeDepth = 0;
     if (head != nullptr)
     {
@@ -448,48 +596,21 @@ int MyAVL_Tree<T>::calcDepth()
 
 // recursive function for the destructor
 template <class T>
-void MyAVL_Tree<T>::removeAll(MyAVL_Node<T>* location)
+void MyAVL_Tree<T>::removeAll(MyAVL_Node<T>* &location)
 {
-    // edge case: empty tree
-    if (location == nullptr)
-    {
-        cout << "ERROR: Empty tree, no elements to remove" << endl;
-    }
-    // edge case: one element
+    // edge case: tree with one element
     // average case: tree with elements
-    else
+    if (location != nullptr)
     {
-        if (location->left != nullptr)
+        if (location->in != nullptr)
         {
-            removeAll(location->left);
+            removeAll(location->in);
         }
-        else if (location->right != nullptr)
-        {
-            removeAll(location->right);
-        }
-        else
-        {
-            if (location->back != nullptr)
-            {
-                if (location->data > location->back->data)
-                {
-                    location->back->right = nullptr;
-                    location->back = nullptr;
-                }
-                else if (location->data < location->back->data)
-                {
-                    location->back->left = nullptr;
-                    location->back = nullptr;
-                }
-            }
-            recent = location;
-            delete recent;
-        }
+        removeAll(location->left);
+        removeAll(location->right);
+        delete location;
     }
-    nodeCount = 0;
-    depth = 0;
-    root = nullptr;
-    recent = nullptr;
+    location = nullptr;
 }
 
 // search function
@@ -510,6 +631,31 @@ bool MyAVL_Tree<T>::search(T valIn)
             guide = guide->right;
         }
         else if (valIn < guide->data)
+        {
+            guide = guide->left;
+        }
+    }
+    return false;
+}
+
+// seaches inner AVL tree
+// searches tree for a unique T
+// true = found, false = does not exist
+template <class T>
+bool MyAVL_Tree<T>::searchInner(MyAVL_Node<T>* location, T innerVal)
+{
+    MyAVL_Node<T>* guide = location;
+    while (guide != nullptr)
+    {
+        if (innerVal == guide->data)
+        {
+            return true;
+        }
+        if (innerVal > guide->data)
+        {
+            guide = guide->right;
+        }
+        else if (innerVal < guide->data)
         {
             guide = guide->left;
         }
@@ -561,6 +707,54 @@ T MyAVL_Tree<T>::find(T valIn)
         }
     }
     cout << "ERROR: Element not found" <<  endl;
+}
+
+// traverses outer tree
+template <class T>
+void MyAVL_Tree<T>::traverse()
+{
+    bool flag = 0;
+    cout << "Outer Node Values: ";
+    traverse(root, flag);
+    cout << endl;
+}
+template <class T>
+void MyAVL_Tree<T>::traverse(MyAVL_Node<T>* focus, bool flag)
+{
+    if (focus != nullptr)
+    {
+        traverse(focus->left, flag);
+        cout << focus->data << " ";
+        if (flag = 1)
+        {
+            if (focus->in != nullptr)
+            {
+                cout << endl;
+                cout << "Inner Node Values: ";
+                traverse(focus->in, flag);
+                cout << endl;
+            }
+        }
+        traverse(focus->right, flag);
+    }
+}
+
+// traverses inner tree at specified location
+template <class T>
+void MyAVL_Tree<T>::traverseInner(MyAVL_Node<T> * focus)
+{
+    bool flag = 0;
+    cout << "Inner Node Values: ";
+    traverse(focus->in, flag);
+    cout << endl;
+}
+
+// traverses entire tree
+template <class T>
+void MyAVL_Tree<T>::traverseAll()
+{
+    bool flag = 1;
+    traverse(root, flag);
 }
 
 // assignment operator
