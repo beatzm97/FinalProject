@@ -33,10 +33,13 @@ public:
     // constructor
     MyAVL_Tree(T);
     // copy constructor
-    MyAVL_Tree(const MyAVL_Tree&);
+    MyAVL_Tree(const MyAVL_Tree<T>&);
 
     // insert into AVL tree
     void add(T);
+
+    // balance tree
+    MyAVL_Node<T>* balance(MyAVL_Node<T>*);
 
     // returns depth of the whole tree
     int getDepth(); //
@@ -76,6 +79,16 @@ private:
 
     void assign(MyAVL_Node<T>*);
     void checkEquivalence(MyAVL_Node<T>*, MyAVL_Node<T>*, bool&);
+
+    // for balancing
+    MyAVL_Node<T>* case1(MyAVL_Node<T>*);   // case 1
+    MyAVL_Node<T>* case2(MyAVL_Node<T>*);   // case 2
+    MyAVL_Node<T>* case3(MyAVL_Node<T>*);   // case 3
+    MyAVL_Node<T>* case4(MyAVL_Node<T>*);   // case 4
+
+    int depthDiff(MyAVL_Node<T>*, int&);
+    int getNodeDepth(MyAVL_Node<T>*);
+
 };
 
 #endif // AVL_TREE_H
@@ -168,7 +181,7 @@ void MyAVL_Tree<T>::add(T valIn)
                 temp->back = head;
                 recent = temp;
                 nodeCount++;
-                depth = calcDepth();
+                root = balance(recent);
             }
             else if (valIn < head->data)
             {
@@ -176,14 +189,230 @@ void MyAVL_Tree<T>::add(T valIn)
                 temp->back = head;
                 recent = temp;
                 nodeCount++;
-                depth = calcDepth();
+                root = balance(recent);
             }
         }
+        depth = calcDepth();
     }
     else
     {
-        cout << "EROOR: No duplicates allowed" << endl;
+        cout << "ERROR: No duplicates allowed" << endl;
     }
+}
+
+// checks balance of tree
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::balance(MyAVL_Node<T>* head)
+{
+    if (nodeCount == 0)
+    {
+        head = root;
+        return head;
+    }
+    else if (nodeCount == 1)
+    {
+        head = root;
+        return head;
+    }
+    else
+    {
+        int difference = 0;
+        int balanceNum = depthDiff(head, difference);
+        if (balanceNum > 1)
+        {
+            MyAVL_Node<T>* temp = root;
+            head = recent;
+            while (temp != head->back)
+            {
+                if (head->data < head->back->data && head->data < temp->data)
+                {
+                    temp = temp->left;
+                }
+                else
+                {
+                    head = case2(head);   // right child of left subtree
+                    return head;
+                }
+            }
+            head = case1(head);   // left child of left subtree
+            return head;
+        }
+        else if (balanceNum < -1)
+        {
+            MyAVL_Node<T>* temp = root;
+            head = recent;
+            while (temp != head->back)
+            {
+                if (head->data > head->back->data && head->data > temp->data)
+                {
+                    temp = temp->right;
+                }
+                else
+                {
+                    head = case3(head); // left child of right subtree
+                    return head;
+                }
+            }
+            head = case4(head); // right child of right subtree
+            return head;
+        }
+        else
+        {
+            head = root;
+        }
+    }
+    return head;
+}
+
+// case1: left child,left subtree rotation
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::case1(MyAVL_Node<T>* head)
+{
+    MyAVL_Node<T>* temp = head->back;
+    head->back = temp->back;
+    if (temp->back != nullptr)
+    {
+        temp->back->left = head;
+    }
+    temp->back = head;
+    temp->left = head->right;
+    if (head->right != nullptr)
+    {
+        head->right->back = temp;
+    }
+    head->right = temp;
+
+    while (head->back != nullptr)
+    {
+        head = head->back;
+    }
+    return head;
+}
+
+// case3: left child, right subtree rotation
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::case3(MyAVL_Node<T>* head)
+{
+    MyAVL_Node<T>* temp = head->back;
+    if (temp->left == nullptr)
+    {
+        head->left = temp;
+        head->back = temp->back;
+        temp->back->left = head;
+        temp->right = nullptr;
+        temp->back = head;
+    }
+    // else if node is on the left side, correct format
+    while (temp->back->data > temp->data)
+    {
+        head = temp;
+        temp = temp->back;
+    }
+    // in correct format
+    temp = temp->back;
+    head->back->left = nullptr;
+    temp->right = head;
+    head->back->back = head;
+    head->right = head->back;
+    head->back = temp;
+
+    head = case4(head);
+    return head;
+}
+
+// case2: right child, left subtree rotation
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::case2(MyAVL_Node<T>* head)
+{
+    MyAVL_Node<T>* temp = head->back;
+    if (temp->right == nullptr)
+    {
+        head->right = temp;
+        head->back = temp->back;
+        temp->back->right = head;
+        temp->left = nullptr;
+        temp->back = head;
+    }
+    // else if node is on the right side of the head node, in correct format
+
+    while (temp->back->data < temp->data)
+    {
+        head = temp;
+        temp = temp->back;
+    }
+    // in correct format
+    temp = temp->back;
+    head->back->right = nullptr;
+    temp->left = head;
+    head->back->back = head;
+    head->left = head->back;
+    head->back = temp;
+
+    head = case1(head);
+    return head;
+}
+
+// case4: right child, right subtree rotation
+template <class T>
+MyAVL_Node<T>* MyAVL_Tree<T>::case4(MyAVL_Node<T>* head)
+{
+    MyAVL_Node<T>* temp = head->back;
+    head->back = temp->back;
+    if (temp->back != nullptr)
+    {
+        temp->back->right = head;
+    }
+    temp->back = head;
+    temp->right = head->left;
+    if (head->left != nullptr)
+    {
+        head->left->back = temp;
+    }
+    head->left = temp;
+
+    while (head->back != nullptr)
+    {
+        head = head->back;
+    }
+    return head;
+}
+
+// calculates the depthDifference between subtrees of a parent node
+template <class T>
+int MyAVL_Tree<T>::depthDiff(MyAVL_Node<T>* head, int& difference)
+{
+    if(difference > 1 || difference < -1)
+    {
+        return difference;
+    }
+    difference = 0;
+    int leftHeight = getNodeDepth(head->left);
+    int rightHeight = getNodeDepth(head->right);
+    difference = leftHeight - rightHeight;
+    if (head->back != nullptr)
+    {
+        depthDiff(head->back, difference);
+    }
+    if(difference > 1 || difference < -1)
+    {
+        return difference;
+    }
+}
+
+// calculates depth of specific node
+template <class T>
+int MyAVL_Tree<T>::getNodeDepth(MyAVL_Node<T>* head)
+{
+
+    int nodeDepth = 0;
+    if (head != nullptr)
+    {
+        int leftDepth = getNodeDepth(head->left);
+        int rightDepth = getNodeDepth(head->right);
+        int greaterDepth = max(leftDepth, rightDepth);
+        nodeDepth = greaterDepth + 1;
+    }
+    return nodeDepth;
 }
 
 // returns number of nodes in the tree
@@ -253,7 +482,8 @@ void MyAVL_Tree<T>::removeAll(MyAVL_Node<T>* location)
                     location->back = nullptr;
                 }
             }
-            delete location;
+            recent = location;
+            delete recent;
         }
     }
     nodeCount = 0;

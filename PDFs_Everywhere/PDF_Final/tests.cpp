@@ -39,8 +39,20 @@ TEST_CASE("AVL Tree class, [AVL Tree]")
         intTree2.add(10);
         intTree2.add(15);
         REQUIRE(intTree == intTree2);
+
+        intTree.add(-1);
+        intTree.add(7);
     }
-    SECTION("getNodeCount")
+    SECTION("case3 and case4")
+    {
+        intTree3.add(15);
+        intTree3.add(0);
+        intTree3.add(20);
+        intTree3.add(13);
+        intTree3.add(11);
+    }
+
+    /*SECTION("getNodeCount")
     {
         REQUIRE(intTree.getNodeCount() == 0);
         REQUIRE(intTree2.getNodeCount() == 0);
@@ -60,6 +72,7 @@ TEST_CASE("AVL Tree class, [AVL Tree]")
         intTree5.add(0);
         REQUIRE(intTree5.getNodeCount() == 4);
     }
+    /*
     SECTION("getDepth")
     {
         REQUIRE(intTree.getDepth() == 0);
@@ -106,10 +119,14 @@ TEST_CASE("AVL Tree class, [AVL Tree]")
         intTree5.add(25);
         intTree5.add(100);
         intTree5.add(22);
-        //intTree.add(0);
+        intTree.add(0);
         intTree.add(124);
         intTree = intTree5;
         REQUIRE(intTree == intTree5);
-    }
+        REQUIRE(intTree5 == intTree);
+        intTree5 = intTree;
+        REQUIRE(intTree == intTree5);
+        REQUIRE(intTree5 == intTree);
+    }*/
 }
 
