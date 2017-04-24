@@ -31,18 +31,19 @@ private:
     AVLnode<T> *root;
     int nodeCount;
 
+    void assign(AVLnode<T>*);
     void clearTree(AVLnode<T>* node);
     void print(AVLnode<T>* node);
 public:
     // constructors
     AVLtree();
-    AVLtree(valIn);
+    AVLtree(T valIn);
     AVLtree(const AVLtree<T>& rhs);
 
     // destructor
     ~AVLtree();
 
-    void insert(AVLnode<T>* node);
+    void insert(valIn);
     void restorAVL(AVLnode<T>* ancestor, AVLnode<T>* node);
     void adjustBalance(AVLnode<T>* end, AVLnode<T>* start);
 
@@ -71,10 +72,52 @@ AVLtree(valIn): root(nullptr)
 }
 
 template <class T>
-MyAVL_Tree<T>::MyAVL_Tree(const MyAVL_Tree & treeIn): root(nullptr), recent(nullptr)
+AVLtree<T>(const AVLtree & treeIn): root(nullptr)
 {
     nodeCount = 0;
     depth = 0;
-    MyAVL_Node<T> * temp2 = treeIn.root;
+    AVLnode<T> * temp2 = treeIn.root;
     assign(temp2);
+}
+template <class T>
+void assign(AVLnode<T>* head)
+{
+    if (head != nullptr)
+    {
+        add(head->data);
+        if (head->left != nullptr)
+        {
+            assign(head->left);
+        }
+        if (head->right != nullptr)
+        {
+            assign(head->right);
+        }
+    }
+}
+
+template <class T>
+void insert(T valIn)
+{
+    AVLnode<T> *temp, *back, *ancestor;
+    temp = root;
+    back = nullptr;
+    ancestor = nullptr;
+
+    if (root == nullptr)
+    {
+        AVLnode<T>* create = new AVLnode(valIn);
+        root = create;
+        return;
+    }
+
+    while (temp != nullptr)
+    {
+        back = temp;
+        if (temp->balanceFactor != '=')
+        {
+            ancestor = temp;
+        }
+        if
+    }
 }

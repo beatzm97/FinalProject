@@ -41,7 +41,13 @@ public:
     // connect head node to an inner list
     void addHead(T, T);
     // add additional inner node to inner list
-    void addInnerNode(T);
+    void addInnerNode(T,T);
+
+    MyHeadNode<T>* findHeadLoc(T);
+
+    bool searchInner(MyHeadNode<T>*, T);
+
+    void printInnerData(T);
 
     // returns T data at int in the head list
     T getHead(int);
@@ -134,43 +140,50 @@ MyAdjacencyList<T>::MyAdjacencyList(const MyAdjacencyList<T> & listIn): front(nu
 template<class T>
 void MyAdjacencyList<T>::addHead(T sourceIn, T destinationIn )
 {
-    rowSize++;
-    MyHeadNode<T>* temp = new MyHeadNode<T>(sourceIn);
     // edge case: empty list
     if (front == nullptr)
     {
+        rowSize = 1;
+        MyHeadNode<T>* temp = new MyHeadNode<T>(sourceIn);
         front = temp;
         back = temp;
+        MyHeadNode<T>* temp2 = new MyHeadNode<T>(destinationIn);
+        temp->in = temp2;
     }
-    // average case: list with elements
-    else
+    else if (searchHead(sourceIn) == false)
     {
+        rowSize++;
+        MyHeadNode<T>* temp = new MyHeadNode<T>(sourceIn);
+        // average case: list with elements
         temp->prev = back;
         back->next = temp;
         back = temp;
+        MyHeadNode<T>* temp2 = new MyHeadNode<T>(destinationIn);
+        temp->in = temp2;
     }
-    MyHeadNode<T>* temp2 = new MyHeadNode<T>(destinationIn);
-    temp->in = temp2;
 }
 
 // add inner node at the end of inner list
 template<class T>
-void MyAdjacencyList<T>::addInnerNode(T destinationIn)
+void MyAdjacencyList<T>::addInnerNode(T sourceIn, T destinationIn)
 {
-    if (front == nullptr)
+    if (front != nullptr)
     {
-        cout << "ERROR: Adjacency List does not have a head, cannot add an inner node" << endl;
-    }
-    else
-    {
-        MyHeadNode<T>* temp = new MyHeadNode<T>(destinationIn);
-        MyHeadNode<T>* temp2 = back->in;
-        while(temp2->next !=nullptr)
+        MyHeadNode<T>* temp2 = findHeadLoc(sourceIn);
+        if (temp2 != nullptr)
         {
-            temp2 = temp2->next;
+            temp2 = temp2->in;
+            if (searchInner(temp2, destinationIn) == false)
+            {
+                MyHeadNode<T>* temp = new MyHeadNode<T>(destinationIn);
+                while (temp2->next != nullptr)
+                {
+                    temp2 = temp2->next;
+                }
+                temp2->next = temp;
+                temp->prev = temp2;
+            }
         }
-        temp2->next = temp;
-        temp->prev = temp2;
     }
 }
 
@@ -287,6 +300,42 @@ bool MyAdjacencyList<T>::searchHead(T valIn)
         }
         return false;
     }
+}
+
+template<class T>
+MyHeadNode<T>* MyAdjacencyList<T>::findHeadLoc(T valIn)
+{
+    if (front == nullptr)
+    {
+        return nullptr;
+    }
+    else
+    {
+        MyHeadNode<T>* temp = front;
+        for (int i = 0; i <rowSize; i++)
+        {
+            if (temp->data == valIn)
+            {
+                return temp;
+            }
+            temp = temp->next;
+        }
+        return nullptr;
+    }
+}
+
+template <class T>
+bool MyAdjacencyList<T>::searchInner(MyHeadNode<T>* headLoc, T innerVal)
+{
+    while (headLoc->next != nullptr)
+    {
+        if (headLoc->data == innerVal)
+        {
+            return true;
+        }
+        headLoc = headLoc->next;
+    }
+    return false;
 }
 
 // destructor
@@ -615,5 +664,20 @@ T MyAdjacencyList<T>::getInnerData(int location, int offset)
             temp = temp->next;
         }
         return temp->data;
+    }
+}
+
+template <class T>
+void MyAdjacencyList<T>::printInnerData(T outerVal)
+{
+    MyHeadNode<T>* temp = findHeadLoc(outerVal);
+    if (temp != nullptr)
+    {
+        temp = temp->in;
+        while (temp != nullptr)
+        {
+            cout << "The word: " << outerVal << " found in " << temp->data << endl;
+            temp = temp->next;
+        }
     }
 }

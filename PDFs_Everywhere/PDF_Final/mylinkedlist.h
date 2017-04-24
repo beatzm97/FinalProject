@@ -106,20 +106,23 @@ MyLinkedList<T>::MyLinkedList(const MyLinkedList<T>& listIn): front(nullptr), ba
 template <class T>
 void MyLinkedList<T>::addToBack(T valIn)
 {
-    size++;
-    MyListNode<T> * temp =  new MyListNode<T>(valIn);
-    // edge case: empty list
-    if (front == nullptr)
+    if (search(valIn) == false)
     {
-        front = temp;
-        back = temp;
-    }
-    // average case: list with elements
-    else
-    {
-        temp->prev = back;
-        back->next = temp;
-        back = temp;
+        size++;
+        MyListNode<T> * temp =  new MyListNode<T>(valIn);
+        // edge case: empty list
+        if (front == nullptr)
+        {
+            front = temp;
+            back = temp;
+        }
+        // average case: list with elements
+        else
+        {
+            temp->prev = back;
+            back->next = temp;
+            back = temp;
+        }
     }
 }
 

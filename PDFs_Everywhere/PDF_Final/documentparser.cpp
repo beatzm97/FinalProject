@@ -18,11 +18,11 @@ void DocumentParser::stopWords(const char* fileName)
         fileIn >> word;
         while (!fileIn.eof())
         {
-            stopWordsList.add(word);
+            stopWordsList.addToBack(word);
             fileIn >> word;
         }
     }
-    cout << "list created" << endl;
+    //cout << "stopWords list created" << endl;
     fileIn.close();
 }
 
@@ -48,8 +48,8 @@ void DocumentParser::openPdf(const char * fileIn)
     try
     {
         PdfMemDocument pdf(fileIn);
-        cout << "File Open: " << fileIn << endl;
-        cout <<  "Page Count: " << pdf.GetPageCount() << endl;
+        //cout << "File Open: " << fileIn << endl;
+        //cout <<  "Page Count: " << pdf.GetPageCount() << endl;
         for (int pNum = 0; pNum < pdf.GetPageCount(); pNum++)
         {
             PdfPage* page = pdf.GetPage(pNum);
@@ -74,7 +74,18 @@ void DocumentParser::openPdf(const char * fileIn)
                             {
                                 PdfString pdfS = arr[i].GetString();
                                 string regS = pdfS.GetString();
-                                cout << regS;
+                                if (stopWordsList.search(regS) ==  false)
+                                {
+                                    if (invertedIndex.searchHead(regS) == false)
+                                    {
+                                        invertedIndex.addHead(regS, fileIn);
+                                    }
+                                    else
+                                    {
+                                        invertedIndex.addInnerNode(regS, fileIn);
+                                    }
+                                }
+                                //cout << regS;
                             }
                         }
                     }
@@ -82,16 +93,27 @@ void DocumentParser::openPdf(const char * fileIn)
                     {
                         PdfString pdfS = var.GetString();
                         string regS = pdfS.GetString();
-                        cout << regS;
+                        if (stopWordsList.search(regS) ==  false)
+                        {
+                            if (invertedIndex.searchHead(regS) == false)
+                            {
+                                invertedIndex.addHead(regS, fileIn);
+                            }
+                            else
+                            {
+                                invertedIndex.addInnerNode(regS, fileIn);
+                            }
+                        }
+                        //cout << regS;
                     }
                 }
             }
         }
-        cout << endl << endl << endl << endl;   // separate file entries
+        //cout << endl << endl << endl << endl;   // separate file entries
     }
     catch (const PdfError& e)
     {
-        cout << "File: '" << fileIn << "' not supported" <<  endl << endl << endl;
+        cout << "File: '" << fileIn << "' not supported" <<  endl;//<< endl << endl;
     }
 }
 
@@ -116,4 +138,27 @@ void DocumentParser::throughDirectory(const char* dirIn)
         openPdf(pointDirent->d_name);
     }
     closedir (pointDir);
+    string wordOne = "CONFIDENTIAL ";
+    string wordTwo = "Manrique";
+    findFiles(wordOne, wordTwo);
+}
+
+void DocumentParser::findFiles(string wordOne, string  wordTwo)
+{
+    if (invertedIndex.searchHead(wordOne) == true)
+    {
+        invertedIndex.printInnerData(wordOne);
+    }
+    else
+    {
+        cout << "ERROR: The word " << wordOne << " not found" << endl;
+    }
+    if (invertedIndex.searchHead(wordTwo) == true)
+    {
+        invertedIndex.printInnerData(wordTwo);
+    }
+    else
+    {
+        cout << "ERROR: The word " << wordTwo << " not found" << endl;
+    }
 }

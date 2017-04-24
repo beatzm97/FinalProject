@@ -200,7 +200,10 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		../PDF_Final/PDF_Final.pro catch.hpp \
 		documentparser.h \
 		myavl_tree.h \
-		stopwords.h ../PDF_Final/main.cpp \
+		stopwords.h \
+		avltree.h \
+		myadjacencylist.h \
+		mylinkedlist.h ../PDF_Final/main.cpp \
 		../PDF_Final/documentparser.cpp \
 		../PDF_Final/tests.cpp \
 		../PDF_Final/stopwords.cpp
@@ -545,11 +548,11 @@ compiler_clean:
 
 main.o: ../PDF_Final/main.cpp ../PDF_Final/catch.hpp \
 		../PDF_Final/documentparser.h \
-		../PDF_Final/myavl_tree.h
+		../PDF_Final/mylinkedlist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../PDF_Final/main.cpp
 
 documentparser.o: ../PDF_Final/documentparser.cpp ../PDF_Final/documentparser.h \
-		../PDF_Final/myavl_tree.h
+		../PDF_Final/mylinkedlist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o documentparser.o ../PDF_Final/documentparser.cpp
 
 tests.o: ../PDF_Final/tests.cpp ../PDF_Final/catch.hpp \

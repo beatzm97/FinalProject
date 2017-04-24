@@ -6,7 +6,8 @@
 #include <string>
 #include <dirent.h>
 #include <fstream>
-#include "myavl_tree.h"
+#include <mylinkedlist.h>
+#include <myadjacencylist.h>
 
 using namespace PoDoFo;
 using namespace std;
@@ -20,9 +21,11 @@ public:
     void createPdf();   // test function // can be removed later
     void openPdf(const char*);  // parse through PDF
     void throughDirectory(const char*); // traverses through a directory, extracts file names, passes to openPdf
+    void findFiles(string, string);
 private:
-    MyAVL_Tree<string> stopWordsList;
+    MyLinkedList<string> stopWordsList;
     fstream fileIn;
+    MyAdjacencyList<string> invertedIndex;
 };
 
 #endif // DOCUMENTPARSER_H
