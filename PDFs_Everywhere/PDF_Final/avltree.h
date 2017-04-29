@@ -1,123 +1,317 @@
 #ifndef AVLTREE_H
 #define AVLTREE_H
 
-
+#include <algorithm>
 #include <iostream>
+
 using namespace std;
-using namespace AVLtree;
 
 template <class T>
-class AVLnode
-{
-    template <class U> friend class AVLtree;
-public:
-    AVLnode(): left(nullptr), right(nullptr), in(nullptr), back(nullptr) {}
-    AVLnode(T val) : left(nullptr), right(nullptr), in(nullptr), back(nullptr), data(val) {}
-    AVLnode(const AVLnode<T>& rhs): left(nullptr), right(nullptr), in(nullptr), back(nullptr), data(rhs.data) {}
-
-private:
-    AVLnode<T>* left;
-    AVLnode<T>* right;
-    AVLnode<T>* in;
-    AVLnode<T>* back;
-    T data;
-    char balanceFactor;
-};
-
-template <class T>
-class AVLtree<T>
+class avlTree
 {
 private:
-    AVLnode<T> *root;
+    template <class U>
+    class avlNode
+    {
+    public:
+        U data;
+        avlNode<U>* left;
+        avlNode<U>* right;
+        int height;
+        // int frequency
+
+        avlNode(const U& dataIn, avlNode<U>* leftIn, avlNode<U>* rightIn, int hIn = 0):
+            data(dataIn), left(leftIn), right(rightIn), height(hIn){}
+    };
+    avlNode<T>* root;
     int nodeCount;
 
-    void assign(AVLnode<T>*);
-    void clearTree(AVLnode<T>* node);
-    void print(AVLnode<T>* node);
+    // returns height of node
+    int height (avlNode<T>* nodeIn) const
+    {
+        return nodeIn == nullptr ?  -1: nodeIn->height;
+    }
+
+    // returns max height of the subtress under a node
+    int max(int leftHeight, int rightHeight) const
+    {
+        return leftHeight > rightHeight ? leftHeight: rightHeight;
+    }
+
+    // private insert method
+    void insert (const T & dataIn, avlNode<T>* & nodeIn)
+    {
+        if (nodeIn == nullptr)
+        {
+            nodeIn == new avlNode<T>(dataIn, nullptr, nullptr);
+            nodeCount++;
+        }
+        else if (dataIn < nodeIn->data)
+        {
+            insert(dataIn, nodeIn->left);
+            if (height(nodeIn->left) - height(nodeIn->right) == 2)
+            {
+                rotateWithLeftChild(nodeIn);    // case 1
+            }
+            else
+            {
+                dblRotateWithLeftChild(nodeIn); // case 2
+            }
+            nodeCount++;
+        }
+        else if (nodeIn->data < dataIn)
+        {
+            insert(dataIn, nodeIn->right);
+            if (height(nodeIn->right) - height(nodeIn->left) == 2)
+            {
+                rotateWithRightChild(nodeIn);   // case 4
+            }
+            else
+            {
+                dblRotateWithRightChild(nodeIn);    // case 3
+            }
+            nodeCount++;
+        }
+        else
+        {
+            cout << "Duplicates are not allowed" << endl;
+        }
+        nodeIn->height = max(height(nodeIn->left), height(nodeIn->right)) + 1;
+    }
+
+    // case 1
+    void rotateWithLeftChild(avlNode<T>* &k2)
+    {
+        avlNode<T> *temp = k2->left;
+        k2->left = temp->right;
+        temp->right = k2;
+        k2->height = max(height(temp->left), height(temp->right)) + 1;
+        temp->height = max(height(temp->left), k2->height) + 1;
+        k2 = temp;
+    }
+
+    // case 4
+    void rotateWithRightChild(avlNode<T>* &k1)
+    {
+        avlNode<T>* temp = k1->right;
+        k1->right = temp->left;
+        temp->left = k1;
+        k1->height = max(height(k1->left), height(k1->right)) + 1;
+        temp->height = max(height(temp->right), k1->height) + 1;
+        k1 = temp;
+    }
+
+    // case 2
+    void dblRotateWithLeftChild(avlNode<T>* &k3)
+    {
+        rotateWithRightChild(k3->left);
+        rotateWithLeftChild(k3);
+    }
+
+    // case 3
+    void dblRotateWithRightChild(avlNode<T>* &k4)
+    {
+        rotateWithLeftChild(k4->right);
+        rotateWithRightChild(k4);
+    }
+
+    // private findSmall function
+    // finds the smallest node in the tree
+    avlNode<T>* findSmall(avlNode<T>* nodeIn) const
+    {
+        if (nodeIn == nullptr)
+        {
+            return nullptr;
+        }
+        if (nodeIn->left == nullptr)
+        {
+            return nodeIn;
+        }
+        return findSmall(nodeIn->left);
+    }
+
+    // priavet findLarge function
+    // finds the largest node in the tree
+    avlNode<T>* findLarge(avlNode<T>* nodeIn) const
+    {
+        if (nodeIn == nullptr)
+        {
+            return nullptr;
+        }
+        while (nodeIn->right != nullptr)
+        {
+            nodeIn = nodeIn->right;
+        }
+        return nodeIn;
+    }
+
+    // private find functions
+    bool find(const T &dataIn, avlNode<T>* nodeIn) const
+    {
+        while (nodeIn != nullptr)
+        {
+            if (dataIn < nodeIn->data)
+            {
+                nodeIn = nodeIn->left;
+            }
+            else if (nodeIn->data < dataIn)
+            {
+                nodeIn = nodeIn->right;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // private clearTree function
+    void clearTree(avlNode<T>* nodeIn)
+    {
+        if (nodeIn != nullptr)
+        {
+            clearTree(nodeIn->left);
+            clearTree(nodeIn->right);
+            delete nodeIn;
+            nodeCount--;
+        }
+        nodeIn = nullptr;
+    }
+
+    // private printOrder function
+    void printOrder(avlNode<T>* nodeIn) const
+    {
+        if (nodeIn != nullptr)
+        {
+            printOrder(nodeIn->left);
+            cout << nodeIn->data << endl;
+            printOrder(nodeIn->right);
+        }
+    }
+
+    /*// checkEquality
+    // recursive == function
+    bool checkEquality(avlNode<T> treeRoot, bool & result)
+    {
+        if (result == false)
+        {
+            return result;
+        }
+        if (treeRoot != nullptr)
+        {
+
+        }
+
+    }*/
+
+
 public:
-    // constructors
-    AVLtree();
-    AVLtree(T valIn);
-    AVLtree(const AVLtree<T>& rhs);
+    // default constructor
+    avlTree(): root(nullptr)
+    {
+        nodeCount = 0;
+    }
+
+    // copy constructor
+    avlTree(const avlTree<T> & rhs): root(nullptr)
+    {
+        clearTree();
+        root = nullptr;
+        copy(rhs.root);
+    }
 
     // destructor
-    ~AVLtree();
+    ~avlTree()
+    {
+        clearTree();
+    }
 
-    void insert(valIn);
-    void restorAVL(AVLnode<T>* ancestor, AVLnode<T>* node);
-    void adjustBalance(AVLnode<T>* end, AVLnode<T>* start);
+    // finding smallest node in the tree
+    const T & findSmall() const
+    {
+        if (isEmpty())
+        {
+            cout << "Tree is empty, cannot find smallest node" << endl;
+        }
+        return findSmall(root)->data;
+    }
 
-    void rotateLeft(AVLnode<T>* node);
-    void rotateRight(AVLnode<T>* node);
-    void adjustLeftRight(AVLnode<T>* end, AVLnode<T>* start);
-    void adjustRightLeft(AVLnode<T>* end, AVLnode<T>* start);
+    // finding largest node in the tree
+    const T & findLarge() const
+    {
+        if (isEmpty())
+        {
+            cout << "Tree is empty, cannot find largest node" << endl;
+        }
+        return findLarge(root)->data;
+    }
 
-    void print();
+    // searches tree for a specific instance of T
+    // returns true if found, false is otherwise
+    bool find(const T & dataIn) const
+    {
+        return find(dataIn, root);
+    }
+
+    // checks if tree is empty
+    // returns true if empty, false if otherwise
+    bool isEmpty() const
+    {
+        return root == nullptr;
+    }
+
+    // clear tree of all values
+    // make tree empty
+    void clearTree()
+    {
+        clearTree(root);
+    }
+
+    // public insert method
+    void insert(const T & dataIn)
+    {
+        insert(dataIn, root);
+    }
+
+    // copy function
+    void copy(avlNode<T>* nodeIn)
+    {
+        if (nodeIn != nullptr)
+        {
+            insert(nodeIn->data);
+            copy(nodeIn->left);
+            copy(nodeIn->right);
+        }
+    }
+
+    // assignment operator
+    avlTree<T>& operator=(const avlTree<T>& rhs)
+    {
+       clearTree();
+       root = nullptr;
+       copy(rhs.root);
+       return *this;
+    }
+
+    // return nodeCount of tree
+    int getNodeCount()
+    {
+        return nodeCount;
+    }
+
+    // traverses tree in order and prints out results
+    // to output documents
+    void printOrder() const
+    {
+        if (isEmpty())
+        {
+            cout << "Tree is empty" << endl;
+        }
+        else
+        {
+            printOrder(root);
+        }
+    }
 };
-
-#endif // AVLTREE_H
-
-template <class T>
-AVLtree(): root(nullptr)
-{
-    nodeCount = 0;
-}
-
-template <class T>
-AVLtree(valIn): root(nullptr)
-{
-    AVLnode<T>* temp = new AVLnode(valIn);
-    root = temp;
-    nodeCount = 1;
-}
-
-template <class T>
-AVLtree<T>(const AVLtree & treeIn): root(nullptr)
-{
-    nodeCount = 0;
-    depth = 0;
-    AVLnode<T> * temp2 = treeIn.root;
-    assign(temp2);
-}
-template <class T>
-void assign(AVLnode<T>* head)
-{
-    if (head != nullptr)
-    {
-        add(head->data);
-        if (head->left != nullptr)
-        {
-            assign(head->left);
-        }
-        if (head->right != nullptr)
-        {
-            assign(head->right);
-        }
-    }
-}
-
-template <class T>
-void insert(T valIn)
-{
-    AVLnode<T> *temp, *back, *ancestor;
-    temp = root;
-    back = nullptr;
-    ancestor = nullptr;
-
-    if (root == nullptr)
-    {
-        AVLnode<T>* create = new AVLnode(valIn);
-        root = create;
-        return;
-    }
-
-    while (temp != nullptr)
-    {
-        back = temp;
-        if (temp->balanceFactor != '=')
-        {
-            ancestor = temp;
-        }
-        if
-    }
-}
+#endif

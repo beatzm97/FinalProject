@@ -47,7 +47,8 @@ void DocumentParser::openPdf(const char * fileIn)
 {
     try
     {
-        PdfMemDocument pdf(fileIn);
+
+        /*PdfMemDocument pdf(fileIn);
         //cout << "File Open: " << fileIn << endl;
         //cout <<  "Page Count: " << pdf.GetPageCount() << endl;
         for (int pNum = 0; pNum < pdf.GetPageCount(); pNum++)
@@ -109,7 +110,7 @@ void DocumentParser::openPdf(const char * fileIn)
                 }
             }
         }
-        //cout << endl << endl << endl << endl;   // separate file entries
+        //cout << endl << endl << endl << endl;   // separate file entries*/
     }
     catch (const PdfError& e)
     {
@@ -138,8 +139,8 @@ void DocumentParser::throughDirectory(const char* dirIn)
         openPdf(pointDirent->d_name);
     }
     closedir (pointDir);
-    string wordOne = "CONFIDENTIAL ";
-    string wordTwo = "Manrique";
+    string wordOne = "variable ";
+    string wordTwo = "banana ";
     findFiles(wordOne, wordTwo);
 }
 
