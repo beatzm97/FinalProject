@@ -51,11 +51,13 @@ OBJECTS_DIR   = ./
 SOURCES       = ../PDF_Final/main.cpp \
 		../PDF_Final/documentparser.cpp \
 		../PDF_Final/tests.cpp \
-		../PDF_Final/stopwords.cpp 
+		../PDF_Final/stopwords.cpp \
+		../PDF_Final/textextractor.cpp 
 OBJECTS       = main.o \
 		documentparser.o \
 		tests.o \
-		stopwords.o
+		stopwords.o \
+		textextractor.o
 DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/linux.conf \
@@ -203,10 +205,12 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		stopwords.h \
 		avltree.h \
 		myadjacencylist.h \
-		mylinkedlist.h ../PDF_Final/main.cpp \
+		mylinkedlist.h \
+		textextractor.h ../PDF_Final/main.cpp \
 		../PDF_Final/documentparser.cpp \
 		../PDF_Final/tests.cpp \
-		../PDF_Final/stopwords.cpp
+		../PDF_Final/stopwords.cpp \
+		../PDF_Final/textextractor.cpp
 QMAKE_TARGET  = PDF_Final
 DESTDIR       = 
 TARGET        = PDF_Final
@@ -548,20 +552,27 @@ compiler_clean:
 
 main.o: ../PDF_Final/main.cpp ../PDF_Final/catch.hpp \
 		../PDF_Final/documentparser.h \
-		../PDF_Final/mylinkedlist.h
+		../PDF_Final/avltree.h \
+		../PDF_Final/mylinkedlist.h \
+		../PDF_Final/myadjacencylist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../PDF_Final/main.cpp
 
 documentparser.o: ../PDF_Final/documentparser.cpp ../PDF_Final/documentparser.h \
-		../PDF_Final/mylinkedlist.h
+		../PDF_Final/avltree.h \
+		../PDF_Final/mylinkedlist.h \
+		../PDF_Final/myadjacencylist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o documentparser.o ../PDF_Final/documentparser.cpp
 
 tests.o: ../PDF_Final/tests.cpp ../PDF_Final/catch.hpp \
-		../PDF_Final/myavl_tree.h
+		../PDF_Final/avltree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tests.o ../PDF_Final/tests.cpp
 
 stopwords.o: ../PDF_Final/stopwords.cpp ../PDF_Final/stopwords.h \
 		../PDF_Final/myavl_tree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o stopwords.o ../PDF_Final/stopwords.cpp
+
+textextractor.o: ../PDF_Final/textextractor.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o textextractor.o ../PDF_Final/textextractor.cpp
 
 ####### Install
 

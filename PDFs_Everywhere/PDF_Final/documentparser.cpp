@@ -47,6 +47,7 @@ void DocumentParser::openPdf(const char * fileIn)
 {
     try
     {
+        docParse.Init(fileIn);
 
         /*PdfMemDocument pdf(fileIn);
         //cout << "File Open: " << fileIn << endl;

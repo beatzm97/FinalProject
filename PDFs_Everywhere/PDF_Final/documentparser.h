@@ -7,6 +7,8 @@
 #include <dirent.h>
 #include <fstream>
 #include "avltree.h"
+#include "textextractor.h"
+
 #include <mylinkedlist.h>
 #include <myadjacencylist.h>
 
@@ -27,6 +29,7 @@ private:
     avlTree<string> stopWordsList;
     fstream fileIn;
     MyAdjacencyList<string> invertedIndex;
+    TextExtractor docParse;
 };
 
 #endif // DOCUMENTPARSER_H

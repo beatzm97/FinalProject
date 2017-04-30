@@ -18,10 +18,10 @@ private:
         avlNode<U>* left;
         avlNode<U>* right;
         int height;
-        // int frequency
+        int frequency;
 
-        avlNode(const U& dataIn, avlNode<U>* leftIn, avlNode<U>* rightIn, int hIn = 0):
-            data(dataIn), left(leftIn), right(rightIn), height(hIn){}
+        avlNode(const U& dataIn, avlNode<U>* leftIn, avlNode<U>* rightIn, int hIn = 0, int fIn = 0):
+            data(dataIn), left(leftIn), right(rightIn), height(hIn), frequency(fIn) {}
     };
     avlNode<T>* root;
     int nodeCount;
@@ -44,6 +44,7 @@ private:
         if (nodeIn == nullptr)
         {
             nodeIn = new avlNode<T>(dataIn, nullptr, nullptr);
+            nodeIn->frequency++;
             nodeCount++;
         }
         else if (dataIn < nodeIn->data)
