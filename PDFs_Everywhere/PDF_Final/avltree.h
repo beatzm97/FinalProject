@@ -43,7 +43,7 @@ private:
     {
         if (nodeIn == nullptr)
         {
-            nodeIn == new avlNode<T>(dataIn, nullptr, nullptr);
+            nodeIn = new avlNode<T>(dataIn, nullptr, nullptr);
             nodeCount++;
         }
         else if (dataIn < nodeIn->data)
@@ -51,26 +51,30 @@ private:
             insert(dataIn, nodeIn->left);
             if (height(nodeIn->left) - height(nodeIn->right) == 2)
             {
-                rotateWithLeftChild(nodeIn);    // case 1
+                if ( dataIn < nodeIn->left->data)
+                {
+                    rotateWithLeftChild(nodeIn);    // case 1
+                }
+                else
+                {
+                     dblRotateWithLeftChild(nodeIn); // case 2
+                }
             }
-            else
-            {
-                dblRotateWithLeftChild(nodeIn); // case 2
-            }
-            nodeCount++;
         }
         else if (nodeIn->data < dataIn)
         {
             insert(dataIn, nodeIn->right);
             if (height(nodeIn->right) - height(nodeIn->left) == 2)
             {
-                rotateWithRightChild(nodeIn);   // case 4
+                if (nodeIn->right->data < dataIn)
+                {
+                    rotateWithRightChild(nodeIn);   // case 4
+                }
+                else
+                {
+                    dblRotateWithRightChild(nodeIn);    // case 3
+                }
             }
-            else
-            {
-                dblRotateWithRightChild(nodeIn);    // case 3
-            }
-            nodeCount++;
         }
         else
         {
@@ -80,39 +84,39 @@ private:
     }
 
     // case 1
-    void rotateWithLeftChild(avlNode<T>* &k2)
+    void rotateWithLeftChild(avlNode<T>* &head)
     {
-        avlNode<T> *temp = k2->left;
-        k2->left = temp->right;
-        temp->right = k2;
-        k2->height = max(height(temp->left), height(temp->right)) + 1;
-        temp->height = max(height(temp->left), k2->height) + 1;
-        k2 = temp;
+        avlNode<T> *temp = head->left;
+        head->left = temp->right;
+        temp->right = head;
+        head->height = max(height(head->left), height(head->right)) + 1;
+        temp->height = max(height(temp->left), head->height) + 1;
+        head = temp;
     }
 
     // case 4
-    void rotateWithRightChild(avlNode<T>* &k1)
+    void rotateWithRightChild(avlNode<T>* &head)
     {
-        avlNode<T>* temp = k1->right;
-        k1->right = temp->left;
-        temp->left = k1;
-        k1->height = max(height(k1->left), height(k1->right)) + 1;
-        temp->height = max(height(temp->right), k1->height) + 1;
-        k1 = temp;
+        avlNode<T>* temp = head->right;
+        head->right = temp->left;
+        temp->left = head;
+        head->height = max(height(head->left), height(head->right)) + 1;
+        temp->height = max(height(temp->right), head->height) + 1;
+        head = temp;
     }
 
     // case 2
-    void dblRotateWithLeftChild(avlNode<T>* &k3)
+    void dblRotateWithLeftChild(avlNode<T>* &head)
     {
-        rotateWithRightChild(k3->left);
-        rotateWithLeftChild(k3);
+        rotateWithRightChild(head->left);
+        rotateWithLeftChild(head);
     }
 
     // case 3
-    void dblRotateWithRightChild(avlNode<T>* &k4)
+    void dblRotateWithRightChild(avlNode<T>* &head)
     {
-        rotateWithLeftChild(k4->right);
-        rotateWithRightChild(k4);
+        rotateWithLeftChild(head->right);
+        rotateWithRightChild(head);
     }
 
     // private findSmall function
@@ -123,11 +127,11 @@ private:
         {
             return nullptr;
         }
-        if (nodeIn->left == nullptr)
+        while (nodeIn->left != nullptr)
         {
-            return nodeIn;
+            nodeIn = nodeIn->left;
         }
-        return findSmall(nodeIn->left);
+        return nodeIn;
     }
 
     // priavet findLarge function
@@ -190,27 +194,29 @@ private:
         }
     }
 
-    /*// checkEquality
-    // recursive == function
-    bool checkEquality(avlNode<T> treeRoot, bool & result)
+    // copy function
+    void copy(avlNode<T>* nodeIn)
     {
-        if (result == false)
+        if (nodeIn != nullptr)
         {
-            return result;
+            insert(nodeIn->data);
+            copy(nodeIn->left);
+            copy(nodeIn->right);
         }
-        if (treeRoot != nullptr)
-        {
-
-        }
-
-    }*/
-
+    }
 
 public:
     // default constructor
     avlTree(): root(nullptr)
     {
         nodeCount = 0;
+    }
+
+    // constructor
+    avlTree(T dataIn): root(nullptr)
+    {
+        nodeCount = 0;
+        insert(dataIn);
     }
 
     // copy constructor
@@ -266,23 +272,14 @@ public:
     void clearTree()
     {
         clearTree(root);
+        root = nullptr;
+        nodeCount = 0;
     }
 
     // public insert method
     void insert(const T & dataIn)
     {
         insert(dataIn, root);
-    }
-
-    // copy function
-    void copy(avlNode<T>* nodeIn)
-    {
-        if (nodeIn != nullptr)
-        {
-            insert(nodeIn->data);
-            copy(nodeIn->left);
-            copy(nodeIn->right);
-        }
     }
 
     // assignment operator

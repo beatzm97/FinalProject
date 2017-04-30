@@ -6,6 +6,7 @@
 #include <string>
 #include <dirent.h>
 #include <fstream>
+#include "avltree.h"
 #include <mylinkedlist.h>
 #include <myadjacencylist.h>
 
@@ -23,7 +24,7 @@ public:
     void throughDirectory(const char*); // traverses through a directory, extracts file names, passes to openPdf
     void findFiles(string, string);
 private:
-    MyLinkedList<string> stopWordsList;
+    avlTree<string> stopWordsList;
     fstream fileIn;
     MyAdjacencyList<string> invertedIndex;
 };

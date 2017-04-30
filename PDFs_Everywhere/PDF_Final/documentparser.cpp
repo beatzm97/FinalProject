@@ -18,11 +18,11 @@ void DocumentParser::stopWords(const char* fileName)
         fileIn >> word;
         while (!fileIn.eof())
         {
-            stopWordsList.addToBack(word);
+            stopWordsList.insert(word);
             fileIn >> word;
         }
     }
-    //cout << "stopWords list created" << endl;
+    cout << "stopWords list created" << endl;
     fileIn.close();
 }
 
