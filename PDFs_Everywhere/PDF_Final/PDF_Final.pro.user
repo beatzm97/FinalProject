@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.2.1, 2017-04-29T21:24:56. -->
+<!-- Written by QtCreator 4.2.1, 2017-04-30T12:23:15. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -306,7 +306,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">PDF_Final2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/PDF_Final/PDF_Final.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug/small stopWords.txt</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"></value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">PDF_Final.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug/small</value>

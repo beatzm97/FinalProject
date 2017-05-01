@@ -19,4 +19,5 @@ HEADERS += \
     avltree.h \
     myadjacencylist.h \
     mylinkedlist.h \
-    textextractor.h
+    textextractor.h \
+    avltreelayered.h

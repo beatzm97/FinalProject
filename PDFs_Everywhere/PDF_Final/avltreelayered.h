@@ -1,5 +1,5 @@
-#ifndef AVLTREE_H
-#define AVLTREE_H
+#ifndef AVLTREELAYERED_H
+#define AVLTREELAYERED_H
 
 #include <algorithm>
 #include <iostream>
@@ -7,7 +7,7 @@
 using namespace std;
 
 template <class T>
-class avlTree
+class avlTreeLayered
 {
 private:
     template <class U>
@@ -17,11 +17,12 @@ private:
         U data;
         avlNode<U>* left;
         avlNode<U>* right;
+        avlNode<U>* inner;
         int height;
         int frequency;
 
-        avlNode(const U& dataIn, avlNode<U>* leftIn, avlNode<U>* rightIn, int hIn = 0, int fIn = 0):
-            data(dataIn), left(leftIn), right(rightIn), height(hIn), frequency(fIn) {}
+        avlNode(const U& dataIn, avlNode<U>* leftIn, avlNode<U>* rightIn, avlNode<U>* inIn, int hIn = 0, int fIn = 0):
+            data(dataIn), left(leftIn), right(rightIn), inner(inIn), height(hIn), frequency(fIn) {}
     };
     avlNode<T>* root;
     int nodeCount;
@@ -39,20 +40,20 @@ private:
     }
 
     // private insert method
-    void insert (const T & dataIn, avlNode<T>* & nodeIn)
+    // nodeIn is the node in points 'root' of inner tree
+    void insertInner (const T & innerLeaf, avlNode<T>* & nodeIn)
     {
         if (nodeIn == nullptr)
         {
-            nodeIn = new avlNode<T>(dataIn, nullptr, nullptr);
+            nodeIn = new avlNode<T>(innerLeaf, nullptr, nullptr, nullptr);
             nodeIn->frequency++;
-            nodeCount++;
         }
-        else if (dataIn < nodeIn->data)
+        else if (innerLeaf < nodeIn->data)
         {
-            insert(dataIn, nodeIn->left);
+            insertInner(innerLeaf, nodeIn->left);
             if (height(nodeIn->left) - height(nodeIn->right) == 2)
             {
-                if ( dataIn < nodeIn->left->data)
+                if (innerLeaf < nodeIn->left->data)
                 {
                     rotateWithLeftChild(nodeIn);    // case 1
                 }
@@ -62,12 +63,12 @@ private:
                 }
             }
         }
-        else if (nodeIn->data < dataIn)
+        else if (nodeIn->data < innerLeaf)
         {
-            insert(dataIn, nodeIn->right);
+            insertInner(innerLeaf, nodeIn->right);
             if (height(nodeIn->right) - height(nodeIn->left) == 2)
             {
-                if (nodeIn->right->data < dataIn)
+                if (nodeIn->right->data < innerLeaf)
                 {
                     rotateWithRightChild(nodeIn);   // case 4
                 }
@@ -79,7 +80,58 @@ private:
         }
         else
         {
-            cout << "Duplicates are not allowed" << endl;
+            // cout << "Duplicates are not allowed" << endl;
+            nodeIn->frequency++;
+        }
+        nodeIn->height = max(height(nodeIn->left), height(nodeIn->right)) + 1;
+    }
+
+    // private insert method
+    // nodeIn originally points to root
+    void insert (const T & outerLeaf, const T& innerLeaf, avlNode<T>* & nodeIn)
+    {
+        if (nodeIn == nullptr)
+        {
+            nodeIn = new avlNode<T>(outerLeaf, nullptr, nullptr, nullptr);
+            insertInner(innerLeaf, nodeIn->inner);
+            nodeIn->frequency++;
+            nodeCount++;
+        }
+        else if (outerLeaf < nodeIn->data)
+        {
+            insert(outerLeaf, innerLeaf, nodeIn->left);
+            if (height(nodeIn->left) - height(nodeIn->right) == 2)
+            {
+                if (outerLeaf < nodeIn->left->data)
+                {
+                    rotateWithLeftChild(nodeIn);    // case 1
+                }
+                else
+                {
+                     dblRotateWithLeftChild(nodeIn); // case 2
+                }
+            }
+        }
+        else if (nodeIn->data < outerLeaf)
+        {
+            insert(outerLeaf, innerLeaf, nodeIn->right);
+            if (height(nodeIn->right) - height(nodeIn->left) == 2)
+            {
+                if (nodeIn->right->data < outerLeaf)
+                {
+                    rotateWithRightChild(nodeIn);   // case 4
+                }
+                else
+                {
+                    dblRotateWithRightChild(nodeIn);    // case 3
+                }
+            }
+        }
+        else
+        {
+            // duplicate must add innner node, so like a new document in the inner tree
+            nodeIn->frequency++;
+            insertInner(innerLeaf, nodeIn->inner);
         }
         nodeIn->height = max(height(nodeIn->left), height(nodeIn->right)) + 1;
     }
@@ -172,16 +224,42 @@ private:
     }
 
     // private clearTree function
+    // for inner tree
+    void clearTreeInner(avlNode<T>* &nodeIn)
+    {
+        if (nodeIn != nullptr)
+        {
+            clearTreeInner(nodeIn->left);
+            clearTreeInner(nodeIn->right);
+            delete nodeIn;
+        }
+        nodeIn = nullptr;
+    }
+
+    // private clearTree function
     void clearTree(avlNode<T>* &nodeIn)
     {
         if (nodeIn != nullptr)
         {
             clearTree(nodeIn->left);
             clearTree(nodeIn->right);
+            clearTreeInner(nodeIn->inner);
             delete nodeIn;
             nodeCount--;
         }
         nodeIn = nullptr;
+    }
+
+    // private printOrder function
+    // for inner nodes
+    void printOrderInner(avlNode<T>* nodeIn) const
+    {
+        if (nodeIn != nullptr)
+        {
+            printOrderInner(nodeIn->left);
+            cout << nodeIn->data << " ";
+            printOrderInner(nodeIn->right);
+        }
     }
 
     // private printOrder function
@@ -190,17 +268,31 @@ private:
         if (nodeIn != nullptr)
         {
             printOrder(nodeIn->left);
-            cout << nodeIn->data << endl;
+            cout << nodeIn->data << ": ";
+            printOrderInner(nodeIn->inner);
+            cout << endl;
             printOrder(nodeIn->right);
         }
     }
 
     // copy function
-    void copy(avlNode<T>* nodeIn)
+    // for inner nodes
+    void copyInner(T outerLeaf, avlNode<T>* &nodeIn)
     {
         if (nodeIn != nullptr)
         {
-            insert(nodeIn->data);
+            insert(outerLeaf, nodeIn->data);
+            copyInner(outerLeaf, nodeIn->inner->left);
+            copyInner(outerLeaf, nodeIn->inner->right);
+        }
+    }
+
+    // copy function
+    void copy(avlNode<T>* &nodeIn)
+    {
+        if (nodeIn != nullptr)
+        {
+            copyInner(nodeIn->data, nodeIn->inner);
             copy(nodeIn->left);
             copy(nodeIn->right);
         }
@@ -208,20 +300,20 @@ private:
 
 public:
     // default constructor
-    avlTree(): root(nullptr)
+    avlTreeLayered(): root(nullptr)
     {
         nodeCount = 0;
     }
 
     // constructor
-    avlTree(T dataIn): root(nullptr)
+    avlTreeLayered(T outerLeaf, T innerLeaf): root(nullptr)
     {
         nodeCount = 0;
-        insert(dataIn);
+        insert(outerLeaf, innerLeaf);
     }
 
     // copy constructor
-    avlTree(const avlTree<T> & rhs): root(nullptr)
+    avlTreeLayered(const avlTree<T> & rhs): root(nullptr)
     {
         clearTree();
         root = nullptr;
@@ -229,7 +321,7 @@ public:
     }
 
     // destructor
-    ~avlTree()
+    ~avlTreeLayered()
     {
         clearTree();
     }
@@ -278,13 +370,13 @@ public:
     }
 
     // public insert method
-    void insert(const T & dataIn)
+    void insert(const T & outerLeaf, const T & innerLeaf)
     {
-        insert(dataIn, root);
+        insert(outerLeaf, innerLeaf, root);
     }
 
     // assignment operator
-    avlTree<T>& operator=(const avlTree<T>& rhs)
+    avlTreeLayered<T>& operator=(const avlTree<T>& rhs)
     {
        clearTree();
        root = nullptr;
@@ -312,4 +404,4 @@ public:
         }
     }
 };
-#endif
+#endif // AVLTREELAYERED_H

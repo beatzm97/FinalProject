@@ -1,7 +1,7 @@
 #ifndef STOPWORDS_H
 #define STOPWORDS_H
 
-#include "myavl_tree.h"
+#include "avltree.h"
 #include <string.h>
 
 class stopWords
@@ -10,7 +10,7 @@ public:
     stopWords();
     ~stopWords();
 private:
-    MyAVL_Tree<string> stopWordsList;
+    avlTree<string> stopWordsList;
     //fstream fileIn;
 };
 
