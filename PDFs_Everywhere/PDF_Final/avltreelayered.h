@@ -282,8 +282,8 @@ private:
         if (nodeIn != nullptr)
         {
             insert(outerLeaf, nodeIn->data);
-            copyInner(outerLeaf, nodeIn->inner->left);
-            copyInner(outerLeaf, nodeIn->inner->right);
+            copyInner(outerLeaf, nodeIn->left);
+            copyInner(outerLeaf, nodeIn->right);
         }
     }
 
@@ -313,7 +313,7 @@ public:
     }
 
     // copy constructor
-    avlTreeLayered(const avlTree<T> & rhs): root(nullptr)
+    avlTreeLayered(avlTreeLayered<T> & rhs): root(nullptr)
     {
         clearTree();
         root = nullptr;
@@ -376,7 +376,7 @@ public:
     }
 
     // assignment operator
-    avlTreeLayered<T>& operator=(const avlTree<T>& rhs)
+    avlTreeLayered<T>& operator=(avlTreeLayered<T>& rhs)
     {
        clearTree();
        root = nullptr;

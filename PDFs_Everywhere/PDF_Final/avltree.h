@@ -196,7 +196,7 @@ private:
     }
 
     // copy function
-    void copy(avlNode<T>* nodeIn)
+    void copy(avlNode<T>* &nodeIn)
     {
         if (nodeIn != nullptr)
         {
@@ -221,7 +221,7 @@ public:
     }
 
     // copy constructor
-    avlTree(const avlTree<T> & rhs): root(nullptr)
+    avlTree(avlTree<T> & rhs): root(nullptr)
     {
         clearTree();
         root = nullptr;
@@ -284,7 +284,7 @@ public:
     }
 
     // assignment operator
-    avlTree<T>& operator=(const avlTree<T>& rhs)
+    avlTree<T>& operator=(avlTree<T>& rhs)
     {
        clearTree();
        root = nullptr;

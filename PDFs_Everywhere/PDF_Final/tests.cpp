@@ -5,7 +5,7 @@
 #include "avltreelayered.h"
 
 // MyAVL_Tree test
-/*
+
 TEST_CASE("AVL Tree class, [AVL Tree]")
 {
     // creating test AVL trees
@@ -155,7 +155,7 @@ TEST_CASE("AVL Tree class, [AVL Tree]")
         intTree5 = intTree;
         REQUIRE(intTree5.getNodeCount() == 16);
     }
-}*/
+}
 
 TEST_CASE("Layered AVL Tree, [Layered AVL Tree]")
 {
@@ -167,7 +167,7 @@ TEST_CASE("Layered AVL Tree, [Layered AVL Tree]")
 
     avlTreeLayered<int> intTreeL5(intTreeL);
 
-    /*SECTION("insert function")
+    SECTION("insert function")
     {
         REQUIRE(intTreeL.getNodeCount() == 0);
         // inserting a node
@@ -281,7 +281,7 @@ TEST_CASE("Layered AVL Tree, [Layered AVL Tree]")
         intTreeL.insert(3,4);
         REQUIRE(intTreeL.getNodeCount() == 16);
         intTreeL.printOrder();
-    }*/
+    }
     SECTION("assignment operator")
     {
         intTreeL.insert(10,3);
