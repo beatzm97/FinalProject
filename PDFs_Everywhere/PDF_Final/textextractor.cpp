@@ -40,36 +40,41 @@ void TextExtractor::Init( const char* pszInput )
         PODOFO_RAISE_ERROR( ePdfError_InvalidHandle );
     }
 
-    PdfMemDocument document( pszInput );
+    PdfMemDocument document( pszInput );    // opening file
 
-    int nCount = document.GetPageCount();
-    for( int i=0; i<nCount; i++ )
+    int nCount = document.GetPageCount();   // getting page count
+    for( int i=0; i<nCount; i++ )   // will perform loop for each page
     {
-        PdfPage* pPage = document.GetPage( i );
+        PdfPage* pPage = document.GetPage( i ); // pointer to page
 
-        this->ExtractText( &document, pPage );
+        this->ExtractText( &document, pPage );  // function call
     }
 }
 
 void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
 {
-    const char*      pszToken = NULL;
-    PdfVariant       var;
-    EPdfContentsType eType;
+    // pDocument = pointer to document  // pPage pointer to page
+    const char*      pszToken = nullptr;   // token is nullptr
+    PdfVariant       var;   // variant is not initialized
+    EPdfContentsType eType; // contentType is not initialized
 
-    PdfContentsTokenizer tokenizer( pPage );
+    PdfContentsTokenizer tokenizer( pPage );    // tokenizer for page
 
-    double dCurPosX     = 0.0;
-    double dCurPosY     = 0.0;
-    bool   bTextBlock   = false;
-    PdfFont* pCurFont   = NULL;
+    double dCurPosX     = 0.0;  // xposition
+    double dCurPosY     = 0.0;  // ypositiion
+    bool   bTextBlock   = false;    // boolean set to false
+    PdfFont* pCurFont   = nullptr; // pdfFont is nullptr
 
-    std::stack<PdfVariant> stack;
+    std::stack<PdfVariant> stack;   // stack
 
+    // will read the type, token, and variant of the next object in pdf
+    // for whole page until there are no more objects left on the page
     while( tokenizer.ReadNext( eType, pszToken, var ) )
     {
+        // if recognized as a valid content type
         if( eType == ePdfContentsType_Keyword )
         {
+            // should not worry about these
             // support 'l' and 'm' tokens
             if( strcmp( pszToken, "l" ) == 0 ||
                 strcmp( pszToken, "m" ) == 0 )
@@ -79,15 +84,18 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
                 dCurPosY = stack.top().GetReal();
                 stack.pop();
             }
+            // beginning of text stream
             else if( strcmp( pszToken, "BT" ) == 0 )
             {
                 cout << pszToken << " ";
-                bTextBlock   = true;
+                bTextBlock   = true;    // bool = true bc text
                 // BT does not reset font
                 // pCurFont     = NULL;
             }
+            // end of text stream
             else if( strcmp( pszToken, "ET" ) == 0 )
             {
+                // error if found first, if bool not set to true when found
                 cout << pszToken << " ";
                 if( !bTextBlock )
                     fprintf( stderr, "WARNING: Found ET without BT!\n" );
@@ -95,6 +103,7 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
 
             if( bTextBlock )
             {
+                // font pdf token, dont really need
                 if( strcmp( pszToken, "Tf" ) == 0 )
                 {
                     cout << pszToken << " ";
@@ -114,6 +123,7 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
                                  pFont->Reference().GenerationNumber() );
                     }
                 }
+                // strings!
                 else if( strcmp( pszToken, "Tj" ) == 0 ||
                          strcmp( pszToken, "'" ) == 0 )
                 {
@@ -121,6 +131,7 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
                     //AddTextElement( dCurPosX, dCurPosY, pCurFont, stack.top().GetString() );
                     //stack.pop();
                 }
+                // line break
                 else if( strcmp( pszToken, "\"" ) == 0 )
                 {
                     cout << pszToken << " ";
@@ -129,6 +140,7 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
                     //stack.pop(); // remove char spacing from stack
                     //stack.pop(); // remove word spacing from stack
                 }
+                // char array
                 else if( strcmp( pszToken, "TJ" ) == 0 )
                 {
                     cout << pszToken << " ";

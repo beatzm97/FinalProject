@@ -52,12 +52,14 @@ SOURCES       = ../PDF_Final/main.cpp \
 		../PDF_Final/documentparser.cpp \
 		../PDF_Final/tests.cpp \
 		../PDF_Final/stopwords.cpp \
-		../PDF_Final/textextractor.cpp 
+		../PDF_Final/textextractor.cpp \
+		../PDF_Final/murmurhash2.cpp 
 OBJECTS       = main.o \
 		documentparser.o \
 		tests.o \
 		stopwords.o \
-		textextractor.o
+		textextractor.o \
+		murmurhash2.o
 DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/linux.conf \
@@ -206,11 +208,14 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		myadjacencylist.h \
 		mylinkedlist.h \
 		textextractor.h \
-		avltreelayered.h ../PDF_Final/main.cpp \
+		avltreelayered.h \
+		murmurhash2.h \
+		hashtable.h ../PDF_Final/main.cpp \
 		../PDF_Final/documentparser.cpp \
 		../PDF_Final/tests.cpp \
 		../PDF_Final/stopwords.cpp \
-		../PDF_Final/textextractor.cpp
+		../PDF_Final/textextractor.cpp \
+		../PDF_Final/murmurhash2.cpp
 QMAKE_TARGET  = PDF_Final
 DESTDIR       = 
 TARGET        = PDF_Final
@@ -566,14 +571,19 @@ documentparser.o: ../PDF_Final/documentparser.cpp ../PDF_Final/documentparser.h 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o documentparser.o ../PDF_Final/documentparser.cpp
 
 tests.o: ../PDF_Final/tests.cpp ../PDF_Final/catch.hpp \
-		../PDF_Final/avltree.h
+		../PDF_Final/avltree.h \
+		../PDF_Final/avltreelayered.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tests.o ../PDF_Final/tests.cpp
 
-stopwords.o: ../PDF_Final/stopwords.cpp ../PDF_Final/stopwords.h
+stopwords.o: ../PDF_Final/stopwords.cpp ../PDF_Final/stopwords.h \
+		../PDF_Final/avltree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o stopwords.o ../PDF_Final/stopwords.cpp
 
 textextractor.o: ../PDF_Final/textextractor.cpp ../PDF_Final/textextractor.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o textextractor.o ../PDF_Final/textextractor.cpp
+
+murmurhash2.o: ../PDF_Final/murmurhash2.cpp ../PDF_Final/murmurhash2.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o murmurhash2.o ../PDF_Final/murmurhash2.cpp
 
 ####### Install
 

@@ -10,7 +10,8 @@ SOURCES += main.cpp \
     documentparser.cpp \
     tests.cpp \
     stopwords.cpp \
-    textextractor.cpp
+    textextractor.cpp \
+    murmurhash2.cpp
 
 HEADERS += \
     catch.hpp \
@@ -20,4 +21,6 @@ HEADERS += \
     myadjacencylist.h \
     mylinkedlist.h \
     textextractor.h \
-    avltreelayered.h
+    avltreelayered.h \
+    murmurhash2.h \
+    hashtable.h

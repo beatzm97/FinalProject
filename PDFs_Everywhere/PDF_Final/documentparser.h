@@ -28,7 +28,7 @@ public:
 private:
     avlTree<string> stopWordsList;
     fstream fileIn;
-    MyAdjacencyList<string> invertedIndex;
+    avlTree<string> invertedIndex;
     TextExtractor docParse;
 };
 

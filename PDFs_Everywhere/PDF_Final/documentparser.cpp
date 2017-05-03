@@ -2,7 +2,6 @@
 
 DocumentParser::DocumentParser()
 {
-
 }
 
 void DocumentParser::stopWords(const char* fileName)
@@ -47,9 +46,9 @@ void DocumentParser::openPdf(const char * fileIn)
 {
     try
     {
-        docParse.Init(fileIn);
+        //docParse.Init(fileIn);
 
-        /*PdfMemDocument pdf(fileIn);
+        PdfMemDocument pdf(fileIn);
         //cout << "File Open: " << fileIn << endl;
         //cout <<  "Page Count: " << pdf.GetPageCount() << endl;
         for (int pNum = 0; pNum < pdf.GetPageCount(); pNum++)
@@ -76,18 +75,13 @@ void DocumentParser::openPdf(const char * fileIn)
                             {
                                 PdfString pdfS = arr[i].GetString();
                                 string regS = pdfS.GetString();
-                                if (stopWordsList.search(regS) ==  false)
+                                string file = fileIn;
+                                /*if (stopWordsList.find(regS) ==  false)
                                 {
-                                    if (invertedIndex.searchHead(regS) == false)
-                                    {
-                                        invertedIndex.addHead(regS, fileIn);
-                                    }
-                                    else
-                                    {
-                                        invertedIndex.addInnerNode(regS, fileIn);
-                                    }
-                                }
-                                //cout << regS;
+                                    invertedIndex.insert(regS, file);
+
+                                }*/
+                                cout << regS << " ";
                             }
                         }
                     }
@@ -95,23 +89,16 @@ void DocumentParser::openPdf(const char * fileIn)
                     {
                         PdfString pdfS = var.GetString();
                         string regS = pdfS.GetString();
-                        if (stopWordsList.search(regS) ==  false)
+                        /*if (stopWordsList.find(regS) ==  false)
                         {
-                            if (invertedIndex.searchHead(regS) == false)
-                            {
-                                invertedIndex.addHead(regS, fileIn);
-                            }
-                            else
-                            {
-                                invertedIndex.addInnerNode(regS, fileIn);
-                            }
-                        }
-                        //cout << regS;
+                            invertedIndex.insert(regS, fileIn);
+                        }*/
+                        cout << regS << " ";
                     }
                 }
             }
         }
-        //cout << endl << endl << endl << endl;   // separate file entries*/
+        //cout << endl << endl << endl << endl;   // separate file entries
     }
     catch (const PdfError& e)
     {
@@ -147,7 +134,7 @@ void DocumentParser::throughDirectory(const char* dirIn)
 
 void DocumentParser::findFiles(string wordOne, string  wordTwo)
 {
-    if (invertedIndex.searchHead(wordOne) == true)
+    /*if (invertedIndex.searchHead(wordOne) == true)
     {
         invertedIndex.printInnerData(wordOne);
     }
@@ -162,5 +149,5 @@ void DocumentParser::findFiles(string wordOne, string  wordTwo)
     else
     {
         cout << "ERROR: The word " << wordTwo << " not found" << endl;
-    }
+    }*/
 }
