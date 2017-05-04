@@ -11,7 +11,8 @@ SOURCES += main.cpp \
     tests.cpp \
     stopwords.cpp \
     textextractor.cpp \
-    murmurhash2.cpp
+    murmurhash2.cpp \
+    hasht.cpp
 
 HEADERS += \
     catch.hpp \
@@ -23,4 +24,5 @@ HEADERS += \
     textextractor.h \
     avltreelayered.h \
     murmurhash2.h \
-    hashtable.h
+    hashtable.h \
+    hasht.h

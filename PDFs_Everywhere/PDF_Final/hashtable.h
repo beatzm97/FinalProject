@@ -3,43 +3,86 @@
 
 #include <algorithm>
 #include <iostream>
+#include <vector>
+#include <string>
 #include "murmurhash2.h"
 #include "avltree.h"
 
-template <class T, class U>
 class hashTable
 {
 private:
-    template <class X, class Y>
     class hashNode
     {
     public:
-        int key;
-        X value;
-        avlTree<Y> data;
-        hashNode<X, Y>* next;
-
-        hashNode(int keyIn, X valIn, Y dataIn, hashNode<X, Y>* nextIn):
-            key(keyIn), value(valIn), data(dataIn), next(nextIn) {}
+        string key;
+        avlTree<string> value;
+        hashNode() {}
+        hashNode(string keyIn, string valueIn): key(keyIn), value(valIn) {}
+        hashNode(hashNode<string>& rhs): key(rhs.key), value(rhs.value) {}
     };
-    hashNode<T, U>* top;
-    int nodeTotal;
-    int nodeTaken;
+    hashNode ** table;
+    // vector<hashNode> table; // vector of hashNodes
+    int nodeTotal;  // number of nodes
+    int nodeTaken;  // number of occupied nodes // should be less than 70% of nodeTotal
+    int seed = 1020;
+
+    unsigned int hashFunction(string key);
     // hash function -> murmur2
     // private versions of public methods
 
 public:
-    // insert -> hash function
-    // search
-    // return value in hashNode
-    // return value in hashNode and corresponding avlTree
-    // print out all data
+    // default constructor
+    hashTable();    // set table to initial value of 2003 <- prime number
+    // constructor
+    hashTable(string, string);    // set table to initial value and insert a node
     // copy constructor
-    // constructor -> copy
-    // overloaded assignment operator
-    // equivalence operator (?) not really
-    // destructor -> clear
+    hashTable(const hashTable<string>&); // copy elements from another table
 
+    // destructor
+    ~hashTable();
+
+    void insert(string, string);  // Add to table
+
+    bool search(string); // search for a key
+    const string & find(string);  // search and return key if found
+
+    int getSize();  // return nodeTotal
+    int getTaken(); // return nodeTaken
+
+    void printContents();   // prints key and corresponding value for filled nodes
+
+    hashTable<string>& operator= (hashTable<string>& rhs);    // overloaded assignment operator
 };
 
 #endif // HASHTABLE_H
+
+// default constructor
+hashTable<string>:: hashTable()
+{
+    table.resize(2003);
+    nodeTotal = 2003;
+    nodeTaken = 0;
+}
+
+// constructor
+hashTable<string>:: hashTable(string keyIn, string valueIn)
+{
+    table.resize(2003);
+    nodeTotal = 2003;
+    unsigned int hash = MurmurHash2(keyIn, keyIn.size(), seed);
+    table[hash] = hashNode(keyIn, valueIn);
+    nodeTaken = 1;
+}
+
+// copy constructor
+
+// destructor
+
+// public insert method
+void hashTable<string>:: insert(string keyIn, string valueIn)
+{
+    unsigned int hash = MurmurHash2(keyIn, keyIn.size(), seed);
+    if (table[hash] != )
+    table[hash] = hashNode(keyIn, valueIn);
+    nodeTaken++;
+}

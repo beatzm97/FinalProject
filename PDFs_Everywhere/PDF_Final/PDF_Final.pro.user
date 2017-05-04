@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.2.1, 2017-05-03T08:44:34. -->
+<!-- Written by QtCreator 4.2.1, 2017-05-04T01:13:08. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -306,10 +306,10 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">PDF_Final2</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/PDF_Final/PDF_Final.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug/small stopWords.txt</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug/Corpus01 stopWords.txt</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">PDF_Final.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug/small</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug/Corpus01</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory.default">/home/coder/Documents/DataStructures/FinalProject/PDFs_Everywhere/build-PDF_Final-Desktop_Qt_5_8_0_GCC_64bit-Debug</value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>

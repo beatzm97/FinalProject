@@ -40,41 +40,36 @@ void TextExtractor::Init( const char* pszInput )
         PODOFO_RAISE_ERROR( ePdfError_InvalidHandle );
     }
 
-    PdfMemDocument document( pszInput );    // opening file
+    PdfMemDocument document( pszInput );
 
-    int nCount = document.GetPageCount();   // getting page count
-    for( int i=0; i<nCount; i++ )   // will perform loop for each page
+    int nCount = document.GetPageCount();
+    for( int i=0; i<nCount; i++ )
     {
-        PdfPage* pPage = document.GetPage( i ); // pointer to page
+        PdfPage* pPage = document.GetPage( i );
 
-        this->ExtractText( &document, pPage );  // function call
+        this->ExtractText( &document, pPage );
     }
 }
 
 void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
 {
-    // pDocument = pointer to document  // pPage pointer to page
-    const char*      pszToken = nullptr;   // token is nullptr
-    PdfVariant       var;   // variant is not initialized
-    EPdfContentsType eType; // contentType is not initialized
+    const char*      pszToken = NULL;
+    PdfVariant       var;
+    EPdfContentsType eType;
 
-    PdfContentsTokenizer tokenizer( pPage );    // tokenizer for page
+    PdfContentsTokenizer tokenizer( pPage );
 
-    double dCurPosX     = 0.0;  // xposition
-    double dCurPosY     = 0.0;  // ypositiion
-    bool   bTextBlock   = false;    // boolean set to false
-    PdfFont* pCurFont   = nullptr; // pdfFont is nullptr
+    double dCurPosX     = 0.0;
+    double dCurPosY     = 0.0;
+    bool   bTextBlock   = false;
+    PdfFont* pCurFont   = NULL;
 
-    std::stack<PdfVariant> stack;   // stack
+    std::stack<PdfVariant> stack;
 
-    // will read the type, token, and variant of the next object in pdf
-    // for whole page until there are no more objects left on the page
     while( tokenizer.ReadNext( eType, pszToken, var ) )
     {
-        // if recognized as a valid content type
         if( eType == ePdfContentsType_Keyword )
         {
-            // should not worry about these
             // support 'l' and 'm' tokens
             if( strcmp( pszToken, "l" ) == 0 ||
                 strcmp( pszToken, "m" ) == 0 )
@@ -84,29 +79,22 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
                 dCurPosY = stack.top().GetReal();
                 stack.pop();
             }
-            // beginning of text stream
             else if( strcmp( pszToken, "BT" ) == 0 )
             {
-                cout << pszToken << " ";
-                bTextBlock   = true;    // bool = true bc text
+                bTextBlock   = true;
                 // BT does not reset font
                 // pCurFont     = NULL;
             }
-            // end of text stream
             else if( strcmp( pszToken, "ET" ) == 0 )
             {
-                // error if found first, if bool not set to true when found
-                cout << pszToken << " ";
                 if( !bTextBlock )
                     fprintf( stderr, "WARNING: Found ET without BT!\n" );
             }
 
             if( bTextBlock )
             {
-                // font pdf token, dont really need
                 if( strcmp( pszToken, "Tf" ) == 0 )
                 {
-                    cout << pszToken << " ";
                     stack.pop();
                     PdfName fontName = stack.top().GetName();
                     PdfObject* pFont = pPage->GetFromResources( PdfName("Font"), fontName );
@@ -123,41 +111,29 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
                                  pFont->Reference().GenerationNumber() );
                     }
                 }
-                // strings!
                 else if( strcmp( pszToken, "Tj" ) == 0 ||
                          strcmp( pszToken, "'" ) == 0 )
                 {
-                    cout << pszToken << " ";
-                    //AddTextElement( dCurPosX, dCurPosY, pCurFont, stack.top().GetString() );
-                    //stack.pop();
+                    AddTextElement( dCurPosX, dCurPosY, pCurFont, stack.top().GetString() );
+                    stack.pop();
                 }
-                // line break
                 else if( strcmp( pszToken, "\"" ) == 0 )
                 {
-                    cout << pszToken << " ";
-                    //AddTextElement( dCurPosX, dCurPosY, pCurFont, stack.top().GetString() );
-                    //stack.pop();
-                    //stack.pop(); // remove char spacing from stack
-                    //stack.pop(); // remove word spacing from stack
+                    AddTextElement( dCurPosX, dCurPosY, pCurFont, stack.top().GetString() );
+                    stack.pop();
+                    stack.pop(); // remove char spacing from stack
+                    stack.pop(); // remove word spacing from stack
                 }
-                // char array
                 else if( strcmp( pszToken, "TJ" ) == 0 )
                 {
-                    cout << pszToken << " ";
                     PdfArray array = stack.top().GetArray();
                     stack.pop();
 
-                    string str1;
                     for( int i=0; i<static_cast<int>(array.GetSize()); i++ )
                     {
-                        if( array[i].IsString() || array[i].IsHexString())
-                        {
-                            PdfString step1 = array[i].GetString();
-                            string step2 = step1.GetString();
-                            str1.append(step2);
-                        }
+                        if( array[i].IsString() || array[i].IsHexString() )
+                            AddTextElement( dCurPosX, dCurPosY, pCurFont, array[i].GetString() );
                     }
-                    AddTextElement( dCurPosX, dCurPosY, pCurFont, str1 );
                 }
             }
         }
@@ -195,5 +171,5 @@ void TextExtractor::AddTextElement( double dCurPosX, double dCurPosY,
         //printf("%02x", static_cast<unsigned char>(*pszData) );
         ++pszData;
     }
-    cout << rString.GetString()<< endl;
+    printf("(%.3f,%.3f) %s \n", dCurPosX, dCurPosY, unicode.GetStringUtf8().c_str() );
 }

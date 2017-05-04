@@ -22,7 +22,8 @@
 
 //-----------------------------------------------------------------------------
 
-uint32_t MurmurHash2 ( const void * key, int len, uint32_t seed )
+template <class T>
+uint32_t MurmurHash2 ( const T *key, int len, uint32_t seed )
 {
   // 'm' and 'r' are mixing constants generated offline.
   // They're not really 'magic', they just happen to work well.
@@ -70,5 +71,5 @@ uint32_t MurmurHash2 ( const void * key, int len, uint32_t seed )
   h *= m;
   h ^= h >> 15;
 
-  return h; // hashed ke
+  return h; // hashed key
 }

@@ -53,13 +53,15 @@ SOURCES       = ../PDF_Final/main.cpp \
 		../PDF_Final/tests.cpp \
 		../PDF_Final/stopwords.cpp \
 		../PDF_Final/textextractor.cpp \
-		../PDF_Final/murmurhash2.cpp 
+		../PDF_Final/murmurhash2.cpp \
+		../PDF_Final/hasht.cpp 
 OBJECTS       = main.o \
 		documentparser.o \
 		tests.o \
 		stopwords.o \
 		textextractor.o \
-		murmurhash2.o
+		murmurhash2.o \
+		hasht.o
 DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/linux.conf \
@@ -210,12 +212,14 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		textextractor.h \
 		avltreelayered.h \
 		murmurhash2.h \
-		hashtable.h ../PDF_Final/main.cpp \
+		hashtable.h \
+		hasht.h ../PDF_Final/main.cpp \
 		../PDF_Final/documentparser.cpp \
 		../PDF_Final/tests.cpp \
 		../PDF_Final/stopwords.cpp \
 		../PDF_Final/textextractor.cpp \
-		../PDF_Final/murmurhash2.cpp
+		../PDF_Final/murmurhash2.cpp \
+		../PDF_Final/hasht.cpp
 QMAKE_TARGET  = PDF_Final
 DESTDIR       = 
 TARGET        = PDF_Final
@@ -584,6 +588,10 @@ textextractor.o: ../PDF_Final/textextractor.cpp ../PDF_Final/textextractor.h
 
 murmurhash2.o: ../PDF_Final/murmurhash2.cpp ../PDF_Final/murmurhash2.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o murmurhash2.o ../PDF_Final/murmurhash2.cpp
+
+hasht.o: ../PDF_Final/hasht.cpp ../PDF_Final/hasht.h \
+		../PDF_Final/avltree.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o hasht.o ../PDF_Final/hasht.cpp
 
 ####### Install
 

@@ -46,7 +46,7 @@ void DocumentParser::openPdf(const char * fileIn)
 {
     try
     {
-        //docParse.Init(fileIn);
+        // docParse.Init(fileIn);
 
         PdfMemDocument pdf(fileIn);
         //cout << "File Open: " << fileIn << endl;
@@ -99,6 +99,7 @@ void DocumentParser::openPdf(const char * fileIn)
             }
         }
         //cout << endl << endl << endl << endl;   // separate file entries
+
     }
     catch (const PdfError& e)
     {
