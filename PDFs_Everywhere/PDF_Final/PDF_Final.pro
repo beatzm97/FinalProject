@@ -7,16 +7,17 @@ LIBS  += -L/usr/include/podofo \
     -lpodofo
 
 SOURCES += main.cpp \
-    documentparser.cpp \
     tests.cpp \
     stopwords.cpp \
     textextractor.cpp \
     murmurhash2.cpp \
-    hasht.cpp
+    hasht.cpp \
+    porter2_stemmer.cpp \
+    searchEnginer.cpp \
+    indexhandler.cpp
 
 HEADERS += \
     catch.hpp \
-    documentparser.h \
     stopwords.h \
     avltree.h \
     myadjacencylist.h \
@@ -25,4 +26,9 @@ HEADERS += \
     avltreelayered.h \
     murmurhash2.h \
     hashtable.h \
-    hasht.h
+    hasht.h \
+    porter2_stemmer.h \
+    string_view.h \
+    hash.h \
+    searchEngine.h \
+    indexhandler.h

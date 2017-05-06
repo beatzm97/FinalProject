@@ -8,6 +8,10 @@
 #include <stack>
 #include <string.h>
 #include <string>
+#include "porter2_stemmer.h"
+#include <avltreelayered.h>
+#include <dirent.h>
+#include <fstream>
 using namespace PoDoFo;
 
 #ifndef MAX_PATH
@@ -23,15 +27,34 @@ class TextExtractor {
     TextExtractor();
     virtual ~TextExtractor();
 
-    void Init( const char* pszInput, avlTree<string> stopWordsIn);
+    void stopWords(const char* stopFileIn, const char* pathIn);   // creates stopWordsList
+
 
  private:
+    string currentFile;
+    avlTreeLayered<string> invertedIndexTree;
+    avlTree<string> stopWordsList;
+    fstream fileIn;
+
+    /** Traverse through the provided directory, so that each file
+     * will be parsed through, filtered, and added to the chosen structure
+     *
+     * \param pathIn given path holding all the documents of interest
+     */
+    void throughDirectory(const char*); // traverses through a directory, extracts file names, passes to openPdf
+
+    /** Receives a file name and calls another function
+     * to extract the text from the pdf
+     * \param pszInput file name, pdf that will be parsed through
+     */
+    void Init( const char* pszInput);
+
     /** Extract all text from the given page
      *
      *  \param pDocument the owning document
      *  \param pPage extract the text of this page.
      */
-    void ExtractText( PdfMemDocument* pDocument, PdfPage* pPage, avlTree<string> stopWordsIn);
+    void ExtractText( PdfMemDocument* pDocument, PdfPage* pPage);
 
     /** Adds a text string to a list which can be sorted by
      *  position on the page later, so that the whole structure
@@ -42,7 +65,7 @@ class TextExtractor {
      *  \param pCurFont font of the text
      *  \param rString the actual string
      */
-    void AddTextElement(PdfFont* pCurFont, const PdfString & rString, avlTree<string> stopWordsIn);
+    void AddTextElement(PdfFont* pCurFont, const PdfString & rString);
 };
 
 #endif // _TEXT_EXTRACTOR_H_

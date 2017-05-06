@@ -49,19 +49,23 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../PDF_Final/main.cpp \
-		../PDF_Final/documentparser.cpp \
 		../PDF_Final/tests.cpp \
 		../PDF_Final/stopwords.cpp \
 		../PDF_Final/textextractor.cpp \
 		../PDF_Final/murmurhash2.cpp \
-		../PDF_Final/hasht.cpp 
+		../PDF_Final/hasht.cpp \
+		../PDF_Final/porter2_stemmer.cpp \
+		../PDF_Final/searchEnginer.cpp \
+		../PDF_Final/indexhandler.cpp 
 OBJECTS       = main.o \
-		documentparser.o \
 		tests.o \
 		stopwords.o \
 		textextractor.o \
 		murmurhash2.o \
-		hasht.o
+		hasht.o \
+		porter2_stemmer.o \
+		searchEnginer.o \
+		indexhandler.o
 DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/linux.conf \
@@ -204,7 +208,6 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/yacc.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/lex.prf \
 		../PDF_Final/PDF_Final.pro catch.hpp \
-		documentparser.h \
 		stopwords.h \
 		avltree.h \
 		myadjacencylist.h \
@@ -213,13 +216,20 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		avltreelayered.h \
 		murmurhash2.h \
 		hashtable.h \
-		hasht.h ../PDF_Final/main.cpp \
-		../PDF_Final/documentparser.cpp \
+		hasht.h \
+		porter2_stemmer.h \
+		string_view.h \
+		hash.h \
+		searchEngine.h \
+		indexhandler.h ../PDF_Final/main.cpp \
 		../PDF_Final/tests.cpp \
 		../PDF_Final/stopwords.cpp \
 		../PDF_Final/textextractor.cpp \
 		../PDF_Final/murmurhash2.cpp \
-		../PDF_Final/hasht.cpp
+		../PDF_Final/hasht.cpp \
+		../PDF_Final/porter2_stemmer.cpp \
+		../PDF_Final/searchEnginer.cpp \
+		../PDF_Final/indexhandler.cpp
 QMAKE_TARGET  = PDF_Final
 DESTDIR       = 
 TARGET        = PDF_Final
@@ -560,30 +570,33 @@ compiler_clean:
 ####### Compile
 
 main.o: ../PDF_Final/main.cpp ../PDF_Final/catch.hpp \
-		../PDF_Final/documentparser.h \
+		../PDF_Final/searchEngine.h \
 		../PDF_Final/avltree.h \
 		../PDF_Final/textextractor.h \
+		../PDF_Final/porter2_stemmer.h \
+		../PDF_Final/string_view.h \
+		../PDF_Final/hash.h \
+		../PDF_Final/avltreelayered.h \
 		../PDF_Final/mylinkedlist.h \
 		../PDF_Final/myadjacencylist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../PDF_Final/main.cpp
 
-documentparser.o: ../PDF_Final/documentparser.cpp ../PDF_Final/documentparser.h \
-		../PDF_Final/avltree.h \
-		../PDF_Final/textextractor.h \
-		../PDF_Final/mylinkedlist.h \
-		../PDF_Final/myadjacencylist.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o documentparser.o ../PDF_Final/documentparser.cpp
-
 tests.o: ../PDF_Final/tests.cpp ../PDF_Final/catch.hpp \
 		../PDF_Final/avltree.h \
-		../PDF_Final/avltreelayered.h
+		../PDF_Final/avltreelayered.h \
+		../PDF_Final/hasht.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tests.o ../PDF_Final/tests.cpp
 
 stopwords.o: ../PDF_Final/stopwords.cpp ../PDF_Final/stopwords.h \
 		../PDF_Final/avltree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o stopwords.o ../PDF_Final/stopwords.cpp
 
-textextractor.o: ../PDF_Final/textextractor.cpp ../PDF_Final/textextractor.h
+textextractor.o: ../PDF_Final/textextractor.cpp ../PDF_Final/textextractor.h \
+		../PDF_Final/avltree.h \
+		../PDF_Final/porter2_stemmer.h \
+		../PDF_Final/string_view.h \
+		../PDF_Final/hash.h \
+		../PDF_Final/avltreelayered.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o textextractor.o ../PDF_Final/textextractor.cpp
 
 murmurhash2.o: ../PDF_Final/murmurhash2.cpp ../PDF_Final/murmurhash2.h
@@ -592,6 +605,25 @@ murmurhash2.o: ../PDF_Final/murmurhash2.cpp ../PDF_Final/murmurhash2.h
 hasht.o: ../PDF_Final/hasht.cpp ../PDF_Final/hasht.h \
 		../PDF_Final/avltree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o hasht.o ../PDF_Final/hasht.cpp
+
+porter2_stemmer.o: ../PDF_Final/porter2_stemmer.cpp ../PDF_Final/porter2_stemmer.h \
+		../PDF_Final/string_view.h \
+		../PDF_Final/hash.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o porter2_stemmer.o ../PDF_Final/porter2_stemmer.cpp
+
+searchEnginer.o: ../PDF_Final/searchEnginer.cpp ../PDF_Final/searchEngine.h \
+		../PDF_Final/avltree.h \
+		../PDF_Final/textextractor.h \
+		../PDF_Final/porter2_stemmer.h \
+		../PDF_Final/string_view.h \
+		../PDF_Final/hash.h \
+		../PDF_Final/avltreelayered.h \
+		../PDF_Final/mylinkedlist.h \
+		../PDF_Final/myadjacencylist.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o searchEnginer.o ../PDF_Final/searchEnginer.cpp
+
+indexhandler.o: ../PDF_Final/indexhandler.cpp ../PDF_Final/indexhandler.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o indexhandler.o ../PDF_Final/indexhandler.cpp
 
 ####### Install
 

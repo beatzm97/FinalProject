@@ -275,6 +275,31 @@ private:
         }
     }
 
+    // private printINdexInfo function
+    // for inner nodes
+    void printIndexInfoInner(avlNode<T>* nodeIn) const
+    {
+        if (nodeIn != nullptr)
+        {
+            printIndexInfoInner(nodeIn->left);
+            cout << nodeIn->data << " ";
+            cout << nodeIn->frequency << " | ";
+            printIndexInfoInner(nodeIn->right);
+        }
+    }
+    // private printIndexInfo function
+    void printIndexInfo(avlNode<T>* nodeIn) const
+    {
+        if (nodeIn != nullptr)
+        {
+            printIndexInfo(nodeIn->left);
+            cout << nodeIn->data << " ";
+            cout << nodeIn->frequency << " | ";
+            printIndexInfoInner(nodeIn->inner);
+            cout << endl;
+            printOrder(nodeIn->right);
+        }
+    }
     // copy function
     // for inner nodes
     void copyInner(T outerLeaf, avlNode<T>* &nodeIn)
@@ -402,6 +427,15 @@ public:
         {
             printOrder(root);
         }
+    }
+
+    void printIndexInfo() const
+    {
+        if (isEmpty())
+        {
+            cout << "Tree is empty" << endl;
+        }
+        else printIndexInfo(root);
     }
 };
 #endif // AVLTREELAYERED_H

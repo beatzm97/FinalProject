@@ -30,25 +30,85 @@ TextExtractor::~TextExtractor()
 {
 }
 
-void TextExtractor::Init( const char* pszInput, avlTree<string> stopWordsList)
+void TextExtractor::stopWords(const char* fileName, const char* pathName)
+{
+    fileIn.open(fileName, ios::in);
+    {
+        if (!fileIn)
+        {
+            cout << fileName << " : File did not open" << endl;
+            exit (EXIT_FAILURE);
+        }
+        string word;
+        fileIn >> word;
+        while (!fileIn.eof())
+        {
+            stopWordsList.insert(word);
+            fileIn >> word;
+        }
+    }
+    cout << "stopWords list created" << endl;
+    fileIn.close();
+    throughDirectory(pathName);
+}
+
+void TextExtractor::throughDirectory(const char* dirIn)
+{
+    struct dirent *pointDirent;
+    DIR *pointDir;
+    int count = 0;
+
+    cout << "Following path: " << dirIn << endl;
+
+    pointDir = opendir (dirIn);
+    if (pointDir == NULL)
+    {
+        cout << "Cannot open directory located at: " << dirIn << endl;
+    }
+    while ((pointDirent = readdir(pointDir)) != NULL)
+    {
+        const char* file = pointDirent->d_name;
+        cout << count << " " << file << endl;
+        count++;
+        Init(pointDirent->d_name);
+    }
+    closedir (pointDir);
+    //persistentIndex
+    // create another class for the index handler
+    invertedIndexTree.printIndexInfo();
+
+    //string wordOne = "variable ";
+    //string wordTwo = "banana ";
+    //findFiles(wordOne, wordTwo);
+}
+
+void TextExtractor::Init( const char* pszInput)
 {
     if( !pszInput )
     {
         PODOFO_RAISE_ERROR( ePdfError_InvalidHandle );
     }
 
-    PdfMemDocument document( pszInput );
-
-    int nCount = document.GetPageCount();
-    for( int i=0; i<nCount; i++ )
+    try
     {
-        PdfPage* pPage = document.GetPage( i );
+        PdfMemDocument document( pszInput );
+        currentFile = pszInput;
 
-        this->ExtractText( &document, pPage, stopWordsList );
+        int nCount = document.GetPageCount();
+        for( int i=0; i<nCount; i++ )
+        {
+            PdfPage* pPage = document.GetPage( i );
+
+            this->ExtractText( &document, pPage);
+        }
     }
+    catch (const PdfError& e)
+        {
+            cout << "File: '" << pszInput << "' not supported" <<  endl;//<< endl << endl;
+        }
 }
 
-void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage, avlTree<string> stopWordsList)
+void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage)
 {
     const char*      pszToken = NULL;
     PdfVariant       var;
@@ -81,8 +141,9 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage, avlT
             }
             else if( strcmp( pszToken, "ET" ) == 0 )
             {
-                if( !bTextBlock )
-                    fprintf( stderr, "WARNING: Found ET without BT!\n" );
+                // ignore warning
+                //if( !bTextBlock )
+                    //fprintf( stderr, "WARNING: Found ET without BT!\n" );
             }
 
             if( bTextBlock )
@@ -92,28 +153,30 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage, avlT
                     stack.pop();
                     PdfName fontName = stack.top().GetName();
                     PdfObject* pFont = pPage->GetFromResources( PdfName("Font"), fontName );
-                    if( !pFont )
+                    // ignore warning
+                    /*if( !pFont )
                     {
                         PODOFO_RAISE_ERROR_INFO( ePdfError_InvalidHandle, "Cannot create font!" );
-                    }
+                    }*/
 
                     pCurFont = pDocument->GetFont( pFont );
-                    if( !pCurFont )
+                    // ignore warning
+                    /*if( !pCurFont )
                     {
                         fprintf( stderr, "WARNING: Unable to create font for object %i %i R\n",
                                  pFont->Reference().ObjectNumber(),
                                  pFont->Reference().GenerationNumber() );
-                    }
+                    }*/
                 }
                 else if( strcmp( pszToken, "Tj" ) == 0 ||
                          strcmp( pszToken, "'" ) == 0 )
                 {
-                    AddTextElement(pCurFont, stack.top().GetString(), stopWordsList);
+                    AddTextElement(pCurFont, stack.top().GetString());
                     stack.pop();
                 }
                 else if( strcmp( pszToken, "\"" ) == 0 )
                 {
-                    AddTextElement(pCurFont, stack.top().GetString(), stopWordsList);
+                    AddTextElement(pCurFont, stack.top().GetString());
                     stack.pop();
                     stack.pop(); // remove char spacing from stack
                     stack.pop(); // remove word spacing from stack
@@ -137,7 +200,7 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage, avlT
                             }
                             else
                             {
-                                AddTextElement(pCurFont, buffer, stopWordsList);
+                                AddTextElement(pCurFont, buffer);
                                 buffer.empty();
                             }
 
@@ -158,34 +221,48 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage, avlT
     }
 }
 
-void TextExtractor::AddTextElement(PdfFont* pCurFont, const PdfString & rString,  avlTree<string> stopWordsList)
+void TextExtractor::AddTextElement(PdfFont* pCurFont, const PdfString & rString)
 {
     if( !pCurFont )
     {
-        fprintf( stderr, "WARNING: Found text but do not have a current font: %s\n", rString.GetString() );
+        // ignore warning
+        //fprintf( stderr, "WARNING: Found text but do not have a current font: %s\n", rString.GetString() );
         return;
     }
 
     if( !pCurFont->GetEncoding() )
     {
-        fprintf( stderr, "WARNING: Found text but do not have a current encoding: %s\n", rString.GetString() );
+        // ignore warning
+        //fprintf( stderr, "WARNING: Found text but do not have a current encoding: %s\n", rString.GetString() );
         return;
     }
 
     // For now just write to console
     PdfString unicode = pCurFont->GetEncoding()->ConvertToUnicode( rString, pCurFont );
     const char* pszData = unicode.GetStringUtf8().c_str();
-    while( *pszData ) {
-        //printf("%02x", static_cast<unsigned char>(*pszData) );
+    while( *pszData )
+    {
         ++pszData;
     }
-    //std:: cout << *pszData << endl;
-//    printf("%s \n", unicode.GetStringUtf8().c_str() );
+    //printf("%s \n", unicode.GetStringUtf8().c_str() );
     //printf("w: %s \n", rString.GetString());
-    std::cout << rString.GetString() << endl;
+    // print statement that worked
+    //std::cout << rString.GetString() << endl;
 
-    /*if (stopWordsList.find(rString.GetString()) == false)
+    string text =  rString.GetString();
+    string result;
+    std::remove_copy_if(text.begin(), text.end(),
+                            std::back_inserter(result), //Store output
+                            std::ptr_fun<int, int>(&std::ispunct)
+                           );
+
+    if (result != "\0" && result != "\n" && result != "\t" && result != "\r" && result != "\v" && result != " ")
     {
-
-    }*/
+        transform(result.begin(), result.end(), result.begin(),::tolower);
+        Porter2Stemmer::stem(result);
+        if (stopWordsList.find(result) == false)
+        {
+            invertedIndexTree.insert(result, currentFile);
+        }
+    }
 }
