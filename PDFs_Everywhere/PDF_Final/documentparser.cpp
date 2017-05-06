@@ -46,9 +46,9 @@ void DocumentParser::openPdf(const char * fileIn)
 {
     try
     {
-        // docParse.Init(fileIn);
+        docParse.Init(fileIn, stopWordsList);
 
-        PdfMemDocument pdf(fileIn);
+        /*PdfMemDocument pdf(fileIn);
         //cout << "File Open: " << fileIn << endl;
         //cout <<  "Page Count: " << pdf.GetPageCount() << endl;
         for (int pNum = 0; pNum < pdf.GetPageCount(); pNum++)
@@ -76,11 +76,11 @@ void DocumentParser::openPdf(const char * fileIn)
                                 PdfString pdfS = arr[i].GetString();
                                 string regS = pdfS.GetString();
                                 string file = fileIn;
-                                /*if (stopWordsList.find(regS) ==  false)
+                                if (stopWordsList.find(regS) ==  false)
                                 {
                                     invertedIndex.insert(regS, file);
 
-                                }*/
+                                }
                                 cout << regS << " ";
                             }
                         }
@@ -89,16 +89,16 @@ void DocumentParser::openPdf(const char * fileIn)
                     {
                         PdfString pdfS = var.GetString();
                         string regS = pdfS.GetString();
-                        /*if (stopWordsList.find(regS) ==  false)
+                        if (stopWordsList.find(regS) ==  false)
                         {
                             invertedIndex.insert(regS, fileIn);
-                        }*/
+                        }
                         cout << regS << " ";
                     }
                 }
             }
         }
-        //cout << endl << endl << endl << endl;   // separate file entries
+        //cout << endl << endl << endl << endl;   // separate file entries*/
 
     }
     catch (const PdfError& e)

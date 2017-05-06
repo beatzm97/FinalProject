@@ -50,7 +50,7 @@ void hashT::insert(string keyIn, string valueIn)
     // if  node is not empty and matches key
     else if (table[hash] != nullptr && table[hash]->key == keyIn)
     {
-        table[hash]->value.insert(valueIn);
+        table[hash]->valueTree.insert(valueIn);
     }
     // else node is empty
     else
@@ -101,8 +101,8 @@ void hashT:: clearTable()
         {
             delete table[i];    // delete hashNode* -> inne pointers
         }
-        delete[] table; // delte hashNode** -> whole pointer
     }
+    delete[] table; // delte hashNode** -> whole pointer
 }
 
 void hashT:: copy(hashT& rhs)
@@ -112,7 +112,23 @@ void hashT:: copy(hashT& rhs)
     for (unsigned int i = 0; i < tableSize; i++)
     {
         table[i]->key = rhs.table[i]->key;
+        table[i]->valueTree = rhs.table[i]->valueTree;
         table[i]->value = rhs.table[i]->value;
+    }
+}
+
+void hashT::printContents()
+{
+    print();
+}
+
+void hashT::print()
+{
+    for (unsigned int i = 0; i < tableSize; i++)
+    {
+        cout << table[i]->key << ": ";
+        table[i]->valueTree.printOrder();
+        cout << endl << endl;
     }
 }
 

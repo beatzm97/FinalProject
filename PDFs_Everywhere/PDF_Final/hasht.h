@@ -14,9 +14,13 @@ private:
     {
     public:
         string key;
-        // string value;
-        avlTree<string> value;
-        hashNode(string keyIn, string valueIn): key(keyIn), value(valueIn) {}
+        string value;
+        avlTree<string> valueTree;
+        hashNode(string keyIn, string valueIn)
+        {
+            key = keyIn;
+            valueTree.insert(valueIn);
+        }
     };
     hashNode ** table;
     unsigned int hashFunction(string key); // change to better has function
@@ -26,6 +30,7 @@ private:
 
     void clearTable();
     void copy(hashT& rhs);
+    void print();
 
 public:
     hashT();
@@ -36,6 +41,7 @@ public:
     bool search(string keyIn);
     string find(string keyIn);
 
+    void printContents();
     hashT& operator=(hashT& rhs);
 };
 

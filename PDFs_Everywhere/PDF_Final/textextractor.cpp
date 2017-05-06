@@ -19,10 +19,7 @@
  ***************************************************************************/
 
 #include "textextractor.h"
-#include <iostream>
-using namespace std;
-#include <string>
-#include <stack>
+
 
 TextExtractor::TextExtractor()
 {
@@ -33,7 +30,7 @@ TextExtractor::~TextExtractor()
 {
 }
 
-void TextExtractor::Init( const char* pszInput )
+void TextExtractor::Init( const char* pszInput, avlTree<string> stopWordsList)
 {
     if( !pszInput )
     {
@@ -47,11 +44,11 @@ void TextExtractor::Init( const char* pszInput )
     {
         PdfPage* pPage = document.GetPage( i );
 
-        this->ExtractText( &document, pPage );
+        this->ExtractText( &document, pPage, stopWordsList );
     }
 }
 
-void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
+void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage, avlTree<string> stopWordsList)
 {
     const char*      pszToken = NULL;
     PdfVariant       var;
@@ -59,8 +56,6 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
 
     PdfContentsTokenizer tokenizer( pPage );
 
-    double dCurPosX     = 0.0;
-    double dCurPosY     = 0.0;
     bool   bTextBlock   = false;
     PdfFont* pCurFont   = NULL;
 
@@ -74,9 +69,8 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
             if( strcmp( pszToken, "l" ) == 0 ||
                 strcmp( pszToken, "m" ) == 0 )
             {
-                dCurPosX = stack.top().GetReal();
+
                 stack.pop();
-                dCurPosY = stack.top().GetReal();
                 stack.pop();
             }
             else if( strcmp( pszToken, "BT" ) == 0 )
@@ -114,12 +108,12 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
                 else if( strcmp( pszToken, "Tj" ) == 0 ||
                          strcmp( pszToken, "'" ) == 0 )
                 {
-                    AddTextElement( dCurPosX, dCurPosY, pCurFont, stack.top().GetString() );
+                    AddTextElement(pCurFont, stack.top().GetString(), stopWordsList);
                     stack.pop();
                 }
                 else if( strcmp( pszToken, "\"" ) == 0 )
                 {
-                    AddTextElement( dCurPosX, dCurPosY, pCurFont, stack.top().GetString() );
+                    AddTextElement(pCurFont, stack.top().GetString(), stopWordsList);
                     stack.pop();
                     stack.pop(); // remove char spacing from stack
                     stack.pop(); // remove word spacing from stack
@@ -128,11 +122,26 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
                 {
                     PdfArray array = stack.top().GetArray();
                     stack.pop();
+                    std::string buffer;
 
                     for( int i=0; i<static_cast<int>(array.GetSize()); i++ )
                     {
-                        if( array[i].IsString() || array[i].IsHexString() )
-                            AddTextElement( dCurPosX, dCurPosY, pCurFont, array[i].GetString() );
+                        if( array[i].IsString())
+                        {
+                            if (array[i].GetString() != " " && array[i].GetString() != "," && array[i].GetString() != "."
+                                    && array[i].GetString() != "\n")
+                            {
+                                PdfString tempPdf = array[i].GetString();
+                                std:: string temp = tempPdf.GetString();
+                                buffer.append(temp);
+                            }
+                            else
+                            {
+                                AddTextElement(pCurFont, buffer, stopWordsList);
+                                buffer.empty();
+                            }
+
+                        }
                     }
                 }
             }
@@ -149,8 +158,7 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage )
     }
 }
 
-void TextExtractor::AddTextElement( double dCurPosX, double dCurPosY,
-        PdfFont* pCurFont, const PdfString & rString )
+void TextExtractor::AddTextElement(PdfFont* pCurFont, const PdfString & rString,  avlTree<string> stopWordsList)
 {
     if( !pCurFont )
     {
@@ -171,5 +179,13 @@ void TextExtractor::AddTextElement( double dCurPosX, double dCurPosY,
         //printf("%02x", static_cast<unsigned char>(*pszData) );
         ++pszData;
     }
-    printf("(%.3f,%.3f) %s \n", dCurPosX, dCurPosY, unicode.GetStringUtf8().c_str() );
+    //std:: cout << *pszData << endl;
+//    printf("%s \n", unicode.GetStringUtf8().c_str() );
+    //printf("w: %s \n", rString.GetString());
+    std::cout << rString.GetString() << endl;
+
+    /*if (stopWordsList.find(rString.GetString()) == false)
+    {
+
+    }*/
 }

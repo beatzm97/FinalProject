@@ -3,6 +3,7 @@
 
 #include "avltree.h"
 #include "avltreelayered.h"
+#include "hasht.h"
 
 // MyAVL_Tree test
 
@@ -307,3 +308,9 @@ TEST_CASE("Layered AVL Tree, [Layered AVL Tree]")
     }
 }
 
+TEST_CASE("Hash table class, [Hash Table]")
+{
+    hashT table1;
+    hashT table2("cat", "document1");
+    hashT table3(table2);
+}

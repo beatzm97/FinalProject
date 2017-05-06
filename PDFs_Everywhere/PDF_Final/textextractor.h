@@ -3,7 +3,11 @@
 
 #include <podofo.h>
 #include <cstdio>
-
+#include "avltree.h"
+#include <iostream>
+#include <stack>
+#include <string.h>
+#include <string>
 using namespace PoDoFo;
 
 #ifndef MAX_PATH
@@ -19,7 +23,7 @@ class TextExtractor {
     TextExtractor();
     virtual ~TextExtractor();
 
-    void Init( const char* pszInput );
+    void Init( const char* pszInput, avlTree<string> stopWordsIn);
 
  private:
     /** Extract all text from the given page
@@ -27,7 +31,7 @@ class TextExtractor {
      *  \param pDocument the owning document
      *  \param pPage extract the text of this page.
      */
-    void ExtractText( PdfMemDocument* pDocument, PdfPage* pPage );
+    void ExtractText( PdfMemDocument* pDocument, PdfPage* pPage, avlTree<string> stopWordsIn);
 
     /** Adds a text string to a list which can be sorted by
      *  position on the page later, so that the whole structure
@@ -38,8 +42,7 @@ class TextExtractor {
      *  \param pCurFont font of the text
      *  \param rString the actual string
      */
-    void AddTextElement( double dCurPosX, double dCurPosY,
-                         PdfFont* pCurFont, const PdfString & rString );
+    void AddTextElement(PdfFont* pCurFont, const PdfString & rString, avlTree<string> stopWordsIn);
 };
 
 #endif // _TEXT_EXTRACTOR_H_
