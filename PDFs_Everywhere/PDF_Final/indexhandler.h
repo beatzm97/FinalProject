@@ -12,10 +12,9 @@ class indexHandler
 public:
     indexHandler();
 
-    void createIndex(avlTreeLayered<string> invertedIndexT, string indexFile);
-    void top50Words(const char*);
+    void createIndex(avlTreeLayered<string> invertedIndexT, string indexFile, int pageCount);
+    void searchStats(const char*);
 private:
-    int indexCount;
     fstream fileInOut;
 
 };

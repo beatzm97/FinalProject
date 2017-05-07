@@ -5,10 +5,8 @@ indexHandler::indexHandler()
 
 }
 
-
-void indexHandler::createIndex(avlTreeLayered<string> invertedIndexTreeIn, string fileName)
+void indexHandler::createIndex(avlTreeLayered<string> invertedIndexTreeIn, string fileName, int pageCount)
 {
-    indexCount = invertedIndexTreeIn.nodeCount;
     fileInOut.open(fileName, ios::out);
     {
         if (!fileInOut)
@@ -16,12 +14,13 @@ void indexHandler::createIndex(avlTreeLayered<string> invertedIndexTreeIn, strin
             cout << fileName << " : File did not open" << endl;
             exit (EXIT_FAILURE);
         }
+        fileInOut << invertedIndexTreeIn.nodeCount << " " << pageCount << endl;
        invertedIndexTreeIn.printIndexInfo(fileInOut);
     }
     fileInOut.close();
 }
 
-void indexHandler::top50Words(const char * indexFile)
+void indexHandler::searchStats(const char * indexFile)
 {
     fileInOut.open(indexFile, ios::in);
     {
@@ -31,10 +30,15 @@ void indexHandler::top50Words(const char * indexFile)
             exit (EXIT_FAILURE);
         }
         int count = 0;
+        int indexCount;
+        int pageCount;
         vector<pair<int, string>> popular;
         string word;
         int frequency = 0;
         string trash;
+
+        fileInOut >> indexCount;
+        fileInOut >> pageCount;
 
         fileInOut >> word;
         while(!fileInOut.eof() && count < indexCount)
@@ -51,11 +55,14 @@ void indexHandler::top50Words(const char * indexFile)
             fileInOut >> word;
             count++;
         }
-        cout << "done reading" << endl;
-        sort(popular.begin(), popular.end());
+
+        cout << "Total number of pages indexed: " << pageCount << endl;
+        cout << "Total number of words indexed: " << indexCount << endl;
+
+        sort(popular.rbegin(), popular.rend());
         for (int i = 0; i < 50; i++)
         {
-            cout << popular[i].first << " " << popular[i].second << endl;
+            cout << "Frequency: " << popular[i].first << " | Term: " << popular[i].second << endl;
         }
     }
 }

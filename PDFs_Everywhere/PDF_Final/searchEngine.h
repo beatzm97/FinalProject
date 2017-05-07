@@ -21,7 +21,7 @@ class searchEngine
 public:
     searchEngine();
     void parse(const char*, const char*, const char*);   // begins parsing process
-    void top50Words(const char*);
+    void searchStats(const char*);
 
 private:
     TextExtractor docParse;

@@ -52,7 +52,7 @@ class TextExtractor {
      * to extract the text from the pdf
      * \param pszInput file name, pdf that will be parsed through
      */
-    void Init( const char* pszInput);
+    void Init( const char* pszInput, int& pageCount);
 
     /** Extract all text from the given page
      *

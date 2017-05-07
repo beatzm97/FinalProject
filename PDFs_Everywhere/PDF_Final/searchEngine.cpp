@@ -10,7 +10,7 @@ void searchEngine::parse(const char* stopList, const char* pathName, const char*
 }
 
 
-void searchEngine::top50Words(const char* indexFile)
+void searchEngine::searchStats(const char* indexFile)
 {
-    iHandle.top50Words(indexFile);
+    iHandle.searchStats(indexFile);
 }

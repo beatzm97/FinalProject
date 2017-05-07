@@ -55,6 +55,8 @@ void TextExtractor::stopWords(const char* fileName, const char* pathName, const 
 
 void TextExtractor::throughDirectory(const char* dirIn)
 {
+    int pageCount = 0;
+
     struct dirent *pointDirent;
     DIR *pointDir;
     int count = 0;
@@ -71,32 +73,28 @@ void TextExtractor::throughDirectory(const char* dirIn)
         const char* file = pointDirent->d_name;
         cout << count << " " << file << endl;
         count++;
-        Init(pointDirent->d_name);
+        Init(pointDirent->d_name, pageCount);
     }
     closedir (pointDir);
     //persistentIndex
     // create another class for the index handler
-    iHandle.createIndex(invertedIndexTree, indexFile);
+    iHandle.createIndex(invertedIndexTree, indexFile, pageCount);
 
     //string wordOne = "variable ";
     //string wordTwo = "banana ";
     //findFiles(wordOne, wordTwo);
 }
 
-void TextExtractor::Init( const char* pszInput)
+void TextExtractor::Init( const char* pszInput, int& pageCount)
 {
-    if( !pszInput )
-    {
-        PODOFO_RAISE_ERROR( ePdfError_InvalidHandle );
-    }
-
     try
     {
         PdfMemDocument document( pszInput );
         currentFile = pszInput;
 
         int nCount = document.GetPageCount();
-        for( int i=0; i<nCount; i++ )
+        pageCount += nCount;
+        for( int i=0; i < nCount; i++ )
         {
             PdfPage* pPage = document.GetPage( i );
 
@@ -105,7 +103,7 @@ void TextExtractor::Init( const char* pszInput)
     }
     catch (const PdfError& e)
         {
-            cout << "File: '" << pszInput << "' not supported" <<  endl;//<< endl << endl;
+            cout << "File: '" << pszInput << "' not supported" <<  endl << endl << endl;
         }
 }
 

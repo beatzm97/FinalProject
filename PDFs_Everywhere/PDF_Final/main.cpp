@@ -17,8 +17,8 @@ int main(int argc, char* const argv[])
     clock_t tStart, tEnd;
     tStart = clock();
     searchEngine search1;
-    //search1.parse(argv[2], argv[1], argv[3]);
-    search1.top50Words(argv[3]);
+    search1.parse(argv[2], argv[1], argv[3]);
+    search1.searchStats(argv[3]);
 
     tEnd = clock();
     float durationTicks = ((float)tEnd - (float)tStart);
