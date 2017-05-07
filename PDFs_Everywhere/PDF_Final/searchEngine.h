@@ -1,5 +1,5 @@
-#ifndef DOCUMENTPARSER_H
-#define DOCUMENTPARSER_H
+#ifndef SEARCH_ENGINE_H
+#define SEARCH_ENGINE_H
 
 #include <iostream>
 #include <podofo.h>
@@ -11,19 +11,21 @@
 #include <mylinkedlist.h>
 #include <myadjacencylist.h>
 
+#include "indexhandler.h"
+
 using namespace PoDoFo;
 using namespace std;
 
-class DocumentParser
+class searchEngine
 {
 public:
-    DocumentParser();
-    void parse(const char*, const char*);   // begins parsing process
+    searchEngine();
+    void parse(const char*, const char*, const char*);   // begins parsing process
+    void top50Words(const char*);
 
-    void createPdf();   // test function // can be removed later
-    void findFiles(string, string);
 private:
     TextExtractor docParse;
+    indexHandler iHandle;
 };
 
-#endif // DOCUMENTPARSER_H
+#endif // SEARCH_ENGINE_H

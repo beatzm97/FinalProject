@@ -13,8 +13,8 @@ SOURCES += main.cpp \
     murmurhash2.cpp \
     hasht.cpp \
     porter2_stemmer.cpp \
-    searchEnginer.cpp \
-    indexhandler.cpp
+    indexhandler.cpp \
+    searchEngine.cpp
 
 HEADERS += \
     catch.hpp \

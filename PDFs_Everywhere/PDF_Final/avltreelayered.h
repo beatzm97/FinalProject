@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -275,29 +276,29 @@ private:
         }
     }
 
-    // private printINdexInfo function
+    // private printIndexInfo function
     // for inner nodes
-    void printIndexInfoInner(avlNode<T>* nodeIn) const
+    void printIndexInfoInner(avlNode<T>* nodeIn, fstream& fileInOut) const
     {
         if (nodeIn != nullptr)
         {
-            printIndexInfoInner(nodeIn->left);
-            cout << nodeIn->data << " ";
-            cout << nodeIn->frequency << " | ";
-            printIndexInfoInner(nodeIn->right);
+            printIndexInfoInner(nodeIn->left, fileInOut);
+            fileInOut << " | " << nodeIn->data << " ";
+            fileInOut << nodeIn->frequency;
+            printIndexInfoInner(nodeIn->right, fileInOut);
         }
     }
     // private printIndexInfo function
-    void printIndexInfo(avlNode<T>* nodeIn) const
+    void printIndexInfo(avlNode<T>* nodeIn, fstream& fileInOut) const
     {
         if (nodeIn != nullptr)
         {
-            printIndexInfo(nodeIn->left);
-            cout << nodeIn->data << " ";
-            cout << nodeIn->frequency << " | ";
-            printIndexInfoInner(nodeIn->inner);
-            cout << endl;
-            printOrder(nodeIn->right);
+            printIndexInfo(nodeIn->left, fileInOut);
+            fileInOut << nodeIn->data << " ";
+            fileInOut << nodeIn->frequency;
+            printIndexInfoInner(nodeIn->inner, fileInOut);
+            fileInOut << endl;
+            printIndexInfo(nodeIn->right, fileInOut);
         }
     }
     // copy function
@@ -429,13 +430,16 @@ public:
         }
     }
 
-    void printIndexInfo() const
+    void printIndexInfo(fstream& fileInOut) const
     {
         if (isEmpty())
         {
             cout << "Tree is empty" << endl;
         }
-        else printIndexInfo(root);
+        else
+        {
+            printIndexInfo(root, fileInOut);
+        }
     }
 };
 #endif // AVLTREELAYERED_H

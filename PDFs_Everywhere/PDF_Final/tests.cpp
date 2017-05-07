@@ -283,6 +283,29 @@ TEST_CASE("Layered AVL Tree, [Layered AVL Tree]")
         REQUIRE(intTreeL.getNodeCount() == 16);
         intTreeL.printOrder();
     }
+    SECTION("printIndexInfo")
+    {
+        intTreeL.insert(10,3);
+        intTreeL.insert(10,4);
+        intTreeL.insert(5,1);
+        intTreeL.insert(1,9);
+        intTreeL.insert(0,5);
+        intTreeL.insert(4,100);
+        intTreeL.insert(8,0);
+        intTreeL.insert(12,4);
+        intTreeL.insert(-1,5);
+        intTreeL.insert(2,7);
+        intTreeL.insert(6,4);
+        intTreeL.insert(11,1);
+        intTreeL.insert(15,2);
+        intTreeL.insert(7,5);
+        intTreeL.insert(20,1);
+        intTreeL.insert(30,9);
+        intTreeL.insert(3,4);
+        REQUIRE(intTreeL.getNodeCount() == 16);
+        //intTreeL.printIndexInfo();
+    }
+
     SECTION("assignment operator")
     {
         intTreeL.insert(10,3);
@@ -308,9 +331,9 @@ TEST_CASE("Layered AVL Tree, [Layered AVL Tree]")
     }
 }
 
-TEST_CASE("Hash table class, [Hash Table]")
+/*TEST_CASE("Hash table class, [Hash Table]")
 {
     hashT table1;
     hashT table2("cat", "document1");
     hashT table3(table2);
-}
+}*/

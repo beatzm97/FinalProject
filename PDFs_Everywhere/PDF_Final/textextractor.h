@@ -9,8 +9,9 @@
 #include <string.h>
 #include <string>
 #include "porter2_stemmer.h"
-#include <avltreelayered.h>
+#include "avltreelayered.h"
 #include <dirent.h>
+#include "indexhandler.h"
 #include <fstream>
 using namespace PoDoFo;
 
@@ -27,14 +28,16 @@ class TextExtractor {
     TextExtractor();
     virtual ~TextExtractor();
 
-    void stopWords(const char* stopFileIn, const char* pathIn);   // creates stopWordsList
+    void stopWords(const char* stopFileIn, const char* pathIn, const char* indexFileIn);   // creates stopWordsList
 
 
  private:
     string currentFile;
+    string indexFile;
+    indexHandler iHandle;
     avlTreeLayered<string> invertedIndexTree;
     avlTree<string> stopWordsList;
-    fstream fileIn;
+    fstream fileInOut;
 
     /** Traverse through the provided directory, so that each file
      * will be parsed through, filtered, and added to the chosen structure

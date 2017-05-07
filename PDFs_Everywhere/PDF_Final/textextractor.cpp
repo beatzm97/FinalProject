@@ -30,25 +30,26 @@ TextExtractor::~TextExtractor()
 {
 }
 
-void TextExtractor::stopWords(const char* fileName, const char* pathName)
+void TextExtractor::stopWords(const char* fileName, const char* pathName, const char* indexFileIn)
 {
-    fileIn.open(fileName, ios::in);
+    indexFile = indexFileIn;
+    fileInOut.open(fileName, ios::in);
     {
-        if (!fileIn)
+        if (!fileInOut)
         {
             cout << fileName << " : File did not open" << endl;
             exit (EXIT_FAILURE);
         }
         string word;
-        fileIn >> word;
-        while (!fileIn.eof())
+        fileInOut >> word;
+        while (!fileInOut.eof())
         {
             stopWordsList.insert(word);
-            fileIn >> word;
+            fileInOut >> word;
         }
     }
     cout << "stopWords list created" << endl;
-    fileIn.close();
+    fileInOut.close();
     throughDirectory(pathName);
 }
 
@@ -75,7 +76,7 @@ void TextExtractor::throughDirectory(const char* dirIn)
     closedir (pointDir);
     //persistentIndex
     // create another class for the index handler
-    invertedIndexTree.printIndexInfo();
+    iHandle.createIndex(invertedIndexTree, indexFile);
 
     //string wordOne = "variable ";
     //string wordTwo = "banana ";
