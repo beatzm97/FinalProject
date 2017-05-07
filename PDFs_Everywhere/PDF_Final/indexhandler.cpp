@@ -66,3 +66,53 @@ void indexHandler::searchStats(const char * indexFile)
         }
     }
 }
+
+void indexHandler::intoAVL(const char* indexFile)
+{
+    fileInOut.open(indexFile, ios::in);
+    {
+        if(!fileInOut)
+        {
+            cout << indexFile << " : File did not open" << endl;
+            exit (EXIT_FAILURE);
+        }
+        int count = 0;
+        int indexCount;
+        string word;
+        string doc;
+        int frequency = 0;
+        int frequencyInner = 0;
+        string trash;
+
+        fileInOut >> indexCount;
+
+        fileInOut >> word;
+        while(!fileInOut.eof() && count < indexCount)
+        {
+            fileInOut >> frequency;
+            for (int i = 0; i < frequency; i++)
+            {
+                fileInOut >> trash;
+                while (trash != ">")
+                {
+                    fileInOut >> doc;
+                    fileInOut >> frequencyInner;
+                    for (int j = 0; j < frequencyInner; j++)
+                    {
+                        indexAVL.insert(word, doc);
+                    }
+                    fileInOut >> trash;
+                }
+            }
+            fileInOut >> word;
+            count++;
+        }
+    }
+}
+
+void searchAVL(string searchTerms)
+{
+    // filter function in parser to stem and filter words
+    // search through avltree here
+    // may have to combine options 1 and 2 of query parser bc persistence of avl contents
+}

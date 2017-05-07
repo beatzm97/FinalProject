@@ -14,8 +14,10 @@ public:
 
     void createIndex(avlTreeLayered<string> invertedIndexT, string indexFile, int pageCount);
     void searchStats(const char*);
+    void intoAVL(const char*);
 private:
     fstream fileInOut;
+    avlTreeLayered<string> indexAVL;
 
 };
 

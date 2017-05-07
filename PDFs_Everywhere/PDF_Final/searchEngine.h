@@ -7,6 +7,7 @@
 
 #include "avltree.h"
 #include "textextractor.h"
+#include "avltreelayered.h"
 
 #include <mylinkedlist.h>
 #include <myadjacencylist.h>
@@ -19,13 +20,16 @@ using namespace std;
 class searchEngine
 {
 public:
-    searchEngine();
+    searchEngine(const char*, const char*, const char*);
     void parse(const char*, const char*, const char*);   // begins parsing process
     void searchStats(const char*);
 
 private:
+    void queryMode(const char*, const char*, const char*);
     TextExtractor docParse;
     indexHandler iHandle;
+    avlTreeLayered<string> avlIndex;
+    bool preference; // true -> avlTree // false -> hashTable
 };
 
 #endif // SEARCH_ENGINE_H

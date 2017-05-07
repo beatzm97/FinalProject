@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     hasht.cpp \
     porter2_stemmer.cpp \
     indexhandler.cpp \
-    searchEngine.cpp
+    searchEngine.cpp \
+    queryprocessor.cpp
 
 HEADERS += \
     catch.hpp \
@@ -31,4 +32,5 @@ HEADERS += \
     string_view.h \
     hash.h \
     searchEngine.h \
-    indexhandler.h
+    indexhandler.h \
+    queryprocessor.h
