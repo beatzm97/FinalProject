@@ -26,7 +26,6 @@ private:
             data(dataIn), left(leftIn), right(rightIn), inner(inIn), height(hIn), frequency(fIn) {}
     };
     avlNode<T>* root;
-    int nodeCount;
 
     // returns height of node
     int height (avlNode<T>* nodeIn) const
@@ -297,7 +296,7 @@ private:
             fileInOut << nodeIn->data << " ";
             fileInOut << nodeIn->frequency;
             printIndexInfoInner(nodeIn->inner, fileInOut);
-            fileInOut << endl;
+            fileInOut << " >" << endl;
             printIndexInfo(nodeIn->right, fileInOut);
         }
     }
@@ -325,6 +324,7 @@ private:
     }
 
 public:
+    int nodeCount;
     // default constructor
     avlTreeLayered(): root(nullptr)
     {

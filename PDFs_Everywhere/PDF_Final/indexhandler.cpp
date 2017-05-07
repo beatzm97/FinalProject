@@ -8,6 +8,7 @@ indexHandler::indexHandler()
 
 void indexHandler::createIndex(avlTreeLayered<string> invertedIndexTreeIn, string fileName)
 {
+    indexCount = invertedIndexTreeIn.nodeCount;
     fileInOut.open(fileName, ios::out);
     {
         if (!fileInOut)
@@ -29,21 +30,30 @@ void indexHandler::top50Words(const char * indexFile)
             cout << indexFile << " : File did not open" << endl;
             exit (EXIT_FAILURE);
         }
+        int count = 0;
         vector<pair<int, string>> popular;
         string word;
-        int frequency;
-        string other;
+        int frequency = 0;
+        string trash;
 
         fileInOut >> word;
-        while(!fileInOut.eof())
+        while(!fileInOut.eof() && count < indexCount)
         {
             fileInOut >> frequency;
             popular.push_back(make_pair(frequency, word));
-            getline(fileInOut, other);
+            fileInOut >> trash;
+            while (trash != ">")
+            {
+                fileInOut >> trash;
+                fileInOut >> frequency;
+                fileInOut >> trash;
+            }
             fileInOut >> word;
+            count++;
         }
+        cout << "done reading" << endl;
         sort(popular.begin(), popular.end());
-        for (int i = 0; i < popular.size(); i++)
+        for (int i = 0; i < 50; i++)
         {
             cout << popular[i].first << " " << popular[i].second << endl;
         }

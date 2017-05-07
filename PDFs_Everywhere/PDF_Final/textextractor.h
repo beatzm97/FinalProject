@@ -3,6 +3,8 @@
 
 #include <podofo.h>
 #include <cstdio>
+#include <algorithm>
+#include <cctype>
 #include "avltree.h"
 #include <iostream>
 #include <stack>

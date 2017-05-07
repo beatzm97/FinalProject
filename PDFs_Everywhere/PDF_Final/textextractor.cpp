@@ -256,8 +256,7 @@ void TextExtractor::AddTextElement(PdfFont* pCurFont, const PdfString & rString)
                             std::back_inserter(result), //Store output
                             std::ptr_fun<int, int>(&std::ispunct)
                            );
-
-    if (result != "\0" && result != "\n" && result != "\t" && result != "\r" && result != "\v" && result != " ")
+    if (result != "\0" && result != "\n" && result != "\t" && result != "\r" && result != "\v" && result != " " && result != "")
     {
         transform(result.begin(), result.end(), result.begin(),::tolower);
         Porter2Stemmer::stem(result);

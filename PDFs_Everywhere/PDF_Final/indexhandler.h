@@ -15,6 +15,7 @@ public:
     void createIndex(avlTreeLayered<string> invertedIndexT, string indexFile);
     void top50Words(const char*);
 private:
+    int indexCount;
     fstream fileInOut;
 
 };
