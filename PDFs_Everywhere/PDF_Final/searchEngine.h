@@ -10,6 +10,7 @@
 #include "textextractor.h"
 #include "indexhandler.h"
 #include "queryprocessor.h"
+#include "maintenancemode.h"
 
 #include <mylinkedlist.h>
 #include <myadjacencylist.h>
@@ -27,6 +28,7 @@ public:
 
 private:
     void qMode(const char*, const char*, const char*);
+    void mMode(const char*, const char*, const char*);
     //TextExtractor docParse;
     //indexHandler iHandle;
     avlTreeLayered<string> avlIndex;

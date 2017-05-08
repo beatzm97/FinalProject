@@ -15,7 +15,8 @@ SOURCES += main.cpp \
     porter2_stemmer.cpp \
     indexhandler.cpp \
     searchEngine.cpp \
-    queryprocessor.cpp
+    queryprocessor.cpp \
+    maintenancemode.cpp
 
 HEADERS += \
     catch.hpp \
@@ -32,4 +33,5 @@ HEADERS += \
     hash.h \
     searchEngine.h \
     indexhandler.h \
-    queryprocessor.h
+    queryprocessor.h \
+    maintenancemode.h

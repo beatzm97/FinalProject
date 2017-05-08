@@ -5,7 +5,7 @@ indexHandler::indexHandler()
 
 }
 
-void indexHandler::createIndex(avlTreeLayered<string> invertedIndexTreeIn, string fileName, int pageCount)
+void indexHandler::createIndex(avlTreeLayered<string>& invertedIndexTreeIn, string fileName, int pageCount)
 {
     fileInOut.open(fileName, ios::out);
     {
@@ -62,13 +62,13 @@ void indexHandler::searchStats(const char * indexFile)
         sort(popular.rbegin(), popular.rend());
         for (int i = 0; i < 50; i++)
         {
-            cout << "Frequency: " << popular[i].first << " | Term: " << popular[i].second << endl;
+            cout <<"Term: " << popular[i].second << ", Frequency: " << popular[i].first << endl;
         }
     }
     fileInOut.close();
 }
 
-void indexHandler::searchAVL(string searchTerms, const char* stopList, const char* indexFile)
+void indexHandler::searchAVL(string searchTerms, const char* stopList, const char* indexFile, const char* pathName)
 {
     int indexCount;
 
@@ -111,8 +111,6 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
     }
     fileInOut.close();
 
-    // cout << "check" << endl;
-
     TextExtractor textExt;
     string text;
     string result;
@@ -124,6 +122,7 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
     vector <pair <int, string>> term2;
     vector <pair <int, string>> output;
     vector <pair <int, string>> intersection;
+    vector <string> docSet;
 
     for (unsigned int i = 0; i < searchTerms.size() + 1; i++)
     {
@@ -161,7 +160,7 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
                 }
                 else if (indexAVL.find(result) == false)
                 {
-                    cout << "No documents with " << result << endl;
+                    cout << "No documents with " << text << endl;
                 }
                 else
                 {
@@ -245,11 +244,14 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
                                 }
                             }
                         }
+                        int count = 0;
                         for (unsigned int k = 0 ; k < output.size(); k++)
                         {
-                           if (output[k].first != 0 && output[k].second != "empty")
+                           if (output[k].first != 0 && output[k].second != "empty" && count < 15)
                            {
-                               cout << output[k].second << endl;
+                               //cout << output[k].second << endl;
+                               docSet.push_back(output[k].second);
+                               count++;
                            }
                         }
                         output.clear();
@@ -263,9 +265,15 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
                         auto last = std::unique(output.begin(), output.end());
                             output.erase(last, output.end());
 
+                        int count = 0;
                         for (unsigned int k = 0; k < output.size(); k++)
                         {
-                            cout << output[k].second << endl;
+                            if (count < 15)
+                            {
+                                //cout << output[k].second << endl;
+                                docSet.push_back(output[k].second);
+                                count++;
+                            }
                         }
                         output.clear();
                         term1.clear();
@@ -302,11 +310,14 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
                                     }
                                 }
                             }
+                            int count = 0;
                             for (unsigned int k = 0 ; k < output.size(); k++)
                             {
-                               if (output[k].first != 0 && output[k].second != "empty")
+                               if (output[k].first != 0 && output[k].second != "empty" && count < 15)
                                {
-                                   cout << output[k].second << endl;
+                                   //cout << output[k].second << endl;
+                                   docSet.push_back(output[k].second);
+                                   count++;
                                }
                             }
                             output.clear();
@@ -319,6 +330,7 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
                             sort(output.rbegin(),output.rend());
                             auto last = std::unique(output.begin(), output.end());
                                 output.erase(last, output.end());
+
                             for (unsigned int k = 0; k < output.size(); k++)
                             {
                                 for (unsigned int j = 0; j < intersection.size(); j++)
@@ -330,11 +342,14 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
                                     }
                                 }
                             }
+                            int count = 0;
                             for (unsigned int k = 0 ; k < output.size(); k++)
                             {
-                                if (output[k].first != 0 && output[k].second != "empty")
+                                if (output[k].first != 0 && output[k].second != "empty" && count < 15)
                                 {
-                                    cout << output[k].second << endl;
+                                    //cout << output[k].second << endl;
+                                    docSet.push_back(output[k].second);
+                                    count++;
                                 }
                             }
                             output.clear();
@@ -342,17 +357,75 @@ void indexHandler::searchAVL(string searchTerms, const char* stopList, const cha
                             term2.clear();
                             intersection.clear();
                         }
+                        else
+                        {
+                            sort(term1.rbegin(), term1.rend());
+                            for (unsigned int k = 0; k < term1.size(); k++)
+                            {
+                                for (unsigned int j = 0; j < intersection.size(); j++)
+                                {
+                                    if (intersection[j].second == term1[k].second)
+                                    {
+                                        term1[k].first = 0;
+                                        term1[k].second = "empty";
+                                    }
+                                }
+                            }
+                            int count = 0;
+                            for (unsigned int k = 0 ; k < term1.size(); k++)
+                            {
+                               if (term1[k].first != 0 && term1[k].second != "empty" && count < 15)
+                               {
+                                   //cout << term1[k].second << endl;
+                                   docSet.push_back(term1[k].second);
+                                   count++;
+                               }
+                            }
+                        }
                     }
                     else
                     {
-                        sort(output.rbegin(), output.rend());
+                        int count = 0;
+                        sort(term1.rbegin(), term1.rend());
                         for (unsigned int k = 0; k < term1.size(); k++)
                         {
-                            cout << term1[k].second << endl;
+                            if (count < 15)
+                            {
+                                //cout << term1[k].second << endl;
+                                docSet.push_back(term1[k].second);
+                            }
                         }
                     }
                 }
             }
         }
     }
+    outputDoc(docSet, pathName);
+}
+
+void indexHandler::outputDoc(vector<string> docSet, const char* pathName)
+{
+    int choice;
+    TextExtractor textExt;
+    do
+    {
+        cout << endl << "Document Results --------------" << endl;
+        for (unsigned int i = 0; i < docSet.size(); i++)
+        {
+            cout << "  " << (i+1) << ": ";
+            cout << docSet[i] << endl;
+        }
+        cout << "\t 0: BACK TO BOOLEAN SEARCH MENU" << endl;
+        cout << "Choose a file to see contents: ";
+        cin >> choice;
+        if (choice > 0 && choice < (docSet.size() + 1))
+        {
+            textExt.documentContents(docSet[choice-1], pathName);
+        }
+        else if (choice != 0)
+        {
+            cout << endl << "***Invalid entry, please try again***" << endl << endl;
+        }
+    }
+    while (choice != 0);
 }

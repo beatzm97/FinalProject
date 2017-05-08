@@ -30,6 +30,30 @@ TextExtractor::~TextExtractor()
 {
 }
 
+void TextExtractor::appendIndex(string pathUser, const char* stopFile, const char* indexFileIn, const char* pathOriginal)
+{
+    complete = false;
+    stopWords(stopFile, pathOriginal, indexFileIn);
+    int back = chdir (pathUser.c_str());
+    if (back == -1)
+    {
+        cout << "Directory change unsuccessful" << endl;
+    }
+    else
+    {
+        indexFile = indexFileIn;
+        throughDirectory(pathUser.c_str());
+    }
+    complete = true;
+    int reverse = chdir (pathOriginal);
+    if (reverse == -1)
+    {
+        cout << "Directory change unsuccessful" << endl;
+    }
+    indexHandler iHandle;
+    iHandle.createIndex(invertedIndexTree, indexFile, pageCount);
+}
+
 string TextExtractor::filter(string text, const char* fileName)
 {
     string result;
@@ -71,6 +95,7 @@ string TextExtractor::filter(string text, const char* fileName)
 
 void TextExtractor::stopWords(const char* fileName, const char* pathName, const char* indexFileIn)
 {
+    traverse = false;
     indexFile = indexFileIn;
     fileInOut.open(fileName, ios::in);
     {
@@ -93,8 +118,6 @@ void TextExtractor::stopWords(const char* fileName, const char* pathName, const 
 
 void TextExtractor::throughDirectory(const char* dirIn)
 {
-    int pageCount = 0;
-
     struct dirent *pointDirent;
     DIR *pointDir;
     int count = 0;
@@ -111,20 +134,17 @@ void TextExtractor::throughDirectory(const char* dirIn)
         const char* file = pointDirent->d_name;
         cout << count << " " << file << endl;
         count++;
-        Init(pointDirent->d_name, pageCount);
+        Init(pointDirent->d_name);
     }
     closedir (pointDir);
-    //persistentIndex
-    // create another class for the index handler
-    indexHandler iHandle;
-    iHandle.createIndex(invertedIndexTree, indexFile, pageCount);
-
-    //string wordOne = "variable ";
-    //string wordTwo = "banana ";
-    //findFiles(wordOne, wordTwo);
+    if (complete == true)
+    {
+        indexHandler iHandle;
+        iHandle.createIndex(invertedIndexTree, indexFile, pageCount);
+    }
 }
 
-void TextExtractor::Init( const char* pszInput, int& pageCount)
+void TextExtractor::Init( const char* pszInput)
 {
     try
     {
@@ -290,21 +310,66 @@ void TextExtractor::AddTextElement(PdfFont* pCurFont, const PdfString & rString)
     //printf("%s \n", unicode.GetStringUtf8().c_str() );
     //printf("w: %s \n", rString.GetString());
     // print statement that worked
-    //std::cout << rString.GetString() << endl;
-
-    string text =  rString.GetString();
-    string result;
-    std::remove_copy_if(text.begin(), text.end(),
-                            std::back_inserter(result), //Store output
-                            std::ptr_fun<int, int>(&std::ispunct)
-                           );
-    if (result != "\0" && result != "\n" && result != "\t" && result != "\r" && result != "\v" && result != " " && result != "")
+    if (traverse == true)
     {
-        transform(result.begin(), result.end(), result.begin(),::tolower);
-        Porter2Stemmer::stem(result);
-        if (stopWordsList.find(result) == false)
+        std::cout << rString.GetString();
+    }
+
+    else
+    {
+        string text =  rString.GetString();
+        string result;
+        std::remove_copy_if(text.begin(), text.end(),
+                                std::back_inserter(result), //Store output
+                                std::ptr_fun<int, int>(&std::ispunct)
+                               );
+        if (result != "\0" && result != "\n" && result != "\t" && result != "\r" && result != "\v" && result != " " && result != "")
         {
-            invertedIndexTree.insert(result, currentFile);
+            transform(result.begin(), result.end(), result.begin(),::tolower);
+            Porter2Stemmer::stem(result);
+            if (stopWordsList.find(result) == false)
+            {
+                invertedIndexTree.insert(result, currentFile);
+            }
         }
     }
+}
+
+void TextExtractor::documentContents(string docName, const char* pathName)
+{
+    traverse = false;
+    int exitFlag;
+    pageCount = 0;
+
+    struct dirent *pointDirent;
+    DIR *pointDir;
+    // cout << "Following path: " << pathName << endl;
+    cout << endl << "Displaying " << docName << endl;
+
+    pointDir = opendir (pathName);
+    if (pointDir == NULL)
+    {
+        cout << "Cannot open directory located at: " << pathName << endl;
+    }
+    while ((pointDirent = readdir(pointDir)) != NULL)
+    {
+        const char* file = pointDirent->d_name;
+        if (file == docName)
+        {
+            traverse = true;
+            Init(pointDirent->d_name);
+        }
+    }
+    closedir (pointDir);
+    traverse = false;
+    do
+    {
+        std::cout << endl << "----- To return to document results, enter 0";
+        std::cin >> exitFlag;
+        if (exitFlag != 0)
+        {
+            cout << endl << "***Invalid entry, please try again***" << endl << endl;
+        }
+    }
+    while (exitFlag != 0);
 }

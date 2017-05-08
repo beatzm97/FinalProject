@@ -15,7 +15,8 @@
 #include <dirent.h>
 #include "indexhandler.h"
 #include <fstream>
-//#include "searchEngine.h"
+#include <unistd.h>
+
 using namespace PoDoFo;
 
 #ifndef MAX_PATH
@@ -33,9 +34,15 @@ class TextExtractor {
 
     void stopWords(const char* stopFileIn, const char* pathIn, const char* indexFileIn);   // creates stopWordsList
     string filter(string text, const char* fileName);
+    void documentContents(string, const char*);
+
+    void appendIndex(string, const char*, const char*, const char*);
 
 
  private:
+    bool traverse;
+    bool complete = true;
+    int pageCount = 0;
     string currentFile;
     string indexFile;
     avlTreeLayered<string> invertedIndexTree;
@@ -53,7 +60,7 @@ class TextExtractor {
      * to extract the text from the pdf
      * \param pszInput file name, pdf that will be parsed through
      */
-    void Init( const char* pszInput, int& pageCount);
+    void Init( const char* pszInput);
 
     /** Extract all text from the given page
      *
