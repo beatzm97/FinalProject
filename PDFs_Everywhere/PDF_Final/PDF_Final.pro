@@ -19,7 +19,6 @@ SOURCES += main.cpp \
 
 HEADERS += \
     catch.hpp \
-    stopwords.h \
     avltree.h \
     myadjacencylist.h \
     mylinkedlist.h \

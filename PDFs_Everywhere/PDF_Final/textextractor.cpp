@@ -30,6 +30,45 @@ TextExtractor::~TextExtractor()
 {
 }
 
+string TextExtractor::filter(string text, const char* fileName)
+{
+    string result;
+
+    fileInOut.open(fileName, ios::in);
+    {
+        if (!fileInOut)
+        {
+            cout << fileName << " : File did not open" << endl;
+            exit (EXIT_FAILURE);
+        }
+        string word;
+        fileInOut >> word;
+        while (!fileInOut.eof())
+        {
+            stopWordsList.insert(word);
+            fileInOut >> word;
+        }
+    }
+    fileInOut.close();
+
+    // cout << text << endl;
+    std::remove_copy_if(text.begin(), text.end(),
+                            std::back_inserter(result), //Store output
+                            std::ptr_fun<int, int>(&std::ispunct)
+                           );
+    if (result != "\0" && result != "\n" && result != "\t" && result != "\r" && result != "\v" && result != " " && result != "")
+    {
+        transform(result.begin(), result.end(), result.begin(),::tolower);
+        Porter2Stemmer::stem(result);
+        if (stopWordsList.find(result) == false)
+        {
+            return result;
+        }
+    }
+    text.empty();
+    return "a";
+}
+
 void TextExtractor::stopWords(const char* fileName, const char* pathName, const char* indexFileIn)
 {
     indexFile = indexFileIn;
@@ -48,7 +87,6 @@ void TextExtractor::stopWords(const char* fileName, const char* pathName, const 
             fileInOut >> word;
         }
     }
-    cout << "stopWords list created" << endl;
     fileInOut.close();
     throughDirectory(pathName);
 }
@@ -78,6 +116,7 @@ void TextExtractor::throughDirectory(const char* dirIn)
     closedir (pointDir);
     //persistentIndex
     // create another class for the index handler
+    indexHandler iHandle;
     iHandle.createIndex(invertedIndexTree, indexFile, pageCount);
 
     //string wordOne = "variable ";
@@ -190,11 +229,16 @@ void TextExtractor::ExtractText( PdfMemDocument* pDocument, PdfPage* pPage)
                     {
                         if( array[i].IsString())
                         {
-                            if (array[i].GetString() != " " && array[i].GetString() != "," && array[i].GetString() != "."
-                                    && array[i].GetString() != "\n")
+
+                            if (array[i].GetString() != "\0" && array[i].GetString() != "\n" && array[i].GetString() != "\t" && array[i].GetString() != "\r" && array[i].GetString() != "\v" && array[i].GetString() != " " && array[i].GetString() != "")
                             {
                                 PdfString tempPdf = array[i].GetString();
                                 std:: string temp = tempPdf.GetString();
+                                std:: string text;
+                                std:: remove_copy_if(temp.begin(), temp.end(),
+                                                        std::back_inserter(text), //Store output
+                                                        std::ptr_fun<int, int>(&std::ispunct)
+                                                       );
                                 buffer.append(temp);
                             }
                             else

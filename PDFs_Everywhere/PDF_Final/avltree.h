@@ -79,7 +79,7 @@ private:
         }
         else
         {
-            cout << "Duplicates are not allowed" << endl;
+            // cout << "Duplicates are not allowed" << endl;
         }
         nodeIn->height = max(height(nodeIn->left), height(nodeIn->right)) + 1;
     }

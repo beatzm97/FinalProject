@@ -202,6 +202,36 @@ private:
         return nodeIn;
     }
 
+    void innerInfoV(avlNode<T>* nodeIn, vector<pair<int, string>>& terms, string dataIn)
+    {
+        while (nodeIn != nullptr)
+        {
+            if (dataIn < nodeIn->data)
+            {
+                nodeIn = nodeIn->left;
+            }
+            else if (nodeIn->data < dataIn)
+            {
+                nodeIn = nodeIn->right;
+            }
+            else
+            {
+                innerInfoVI(nodeIn->inner, terms);
+                nodeIn = nullptr;
+            }
+        }
+    }
+
+    void innerInfoVI(avlNode<T>* nodeIn, vector<pair<int, string>>& terms) const
+    {
+        if (nodeIn != nullptr)
+        {
+            innerInfoVI(nodeIn->left, terms);
+            terms.push_back(make_pair(nodeIn->frequency, nodeIn->data));
+            innerInfoVI(nodeIn->right, terms);
+        }
+    }
+
     // private find functions
     bool find(const T &dataIn, avlNode<T>* nodeIn) const
     {
@@ -440,6 +470,11 @@ public:
         {
             printIndexInfo(root, fileInOut);
         }
+    }
+
+    void innerInfoV(vector<pair <int, string>>& terms, string data)
+    {
+        innerInfoV(root, terms, data);
     }
 
 };

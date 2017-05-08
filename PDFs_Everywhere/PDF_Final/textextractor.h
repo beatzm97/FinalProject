@@ -15,6 +15,7 @@
 #include <dirent.h>
 #include "indexhandler.h"
 #include <fstream>
+//#include "searchEngine.h"
 using namespace PoDoFo;
 
 #ifndef MAX_PATH
@@ -31,12 +32,12 @@ class TextExtractor {
     virtual ~TextExtractor();
 
     void stopWords(const char* stopFileIn, const char* pathIn, const char* indexFileIn);   // creates stopWordsList
+    string filter(string text, const char* fileName);
 
 
  private:
     string currentFile;
     string indexFile;
-    indexHandler iHandle;
     avlTreeLayered<string> invertedIndexTree;
     avlTree<string> stopWordsList;
     fstream fileInOut;

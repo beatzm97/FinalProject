@@ -210,7 +210,6 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/yacc.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/lex.prf \
 		../PDF_Final/PDF_Final.pro catch.hpp \
-		stopwords.h \
 		avltree.h \
 		myadjacencylist.h \
 		mylinkedlist.h \
@@ -576,12 +575,13 @@ compiler_clean:
 main.o: ../PDF_Final/main.cpp ../PDF_Final/catch.hpp \
 		../PDF_Final/searchEngine.h \
 		../PDF_Final/avltree.h \
+		../PDF_Final/avltreelayered.h \
 		../PDF_Final/textextractor.h \
 		../PDF_Final/porter2_stemmer.h \
 		../PDF_Final/string_view.h \
 		../PDF_Final/hash.h \
-		../PDF_Final/avltreelayered.h \
 		../PDF_Final/indexhandler.h \
+		../PDF_Final/queryprocessor.h \
 		../PDF_Final/mylinkedlist.h \
 		../PDF_Final/myadjacencylist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../PDF_Final/main.cpp
@@ -618,17 +618,23 @@ porter2_stemmer.o: ../PDF_Final/porter2_stemmer.cpp ../PDF_Final/porter2_stemmer
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o porter2_stemmer.o ../PDF_Final/porter2_stemmer.cpp
 
 indexhandler.o: ../PDF_Final/indexhandler.cpp ../PDF_Final/indexhandler.h \
-		../PDF_Final/avltreelayered.h
+		../PDF_Final/avltreelayered.h \
+		../PDF_Final/textextractor.h \
+		../PDF_Final/avltree.h \
+		../PDF_Final/porter2_stemmer.h \
+		../PDF_Final/string_view.h \
+		../PDF_Final/hash.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o indexhandler.o ../PDF_Final/indexhandler.cpp
 
 searchEngine.o: ../PDF_Final/searchEngine.cpp ../PDF_Final/searchEngine.h \
 		../PDF_Final/avltree.h \
+		../PDF_Final/avltreelayered.h \
 		../PDF_Final/textextractor.h \
 		../PDF_Final/porter2_stemmer.h \
 		../PDF_Final/string_view.h \
 		../PDF_Final/hash.h \
-		../PDF_Final/avltreelayered.h \
 		../PDF_Final/indexhandler.h \
+		../PDF_Final/queryprocessor.h \
 		../PDF_Final/mylinkedlist.h \
 		../PDF_Final/myadjacencylist.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o searchEngine.o ../PDF_Final/searchEngine.cpp
