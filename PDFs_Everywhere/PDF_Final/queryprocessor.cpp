@@ -17,26 +17,35 @@ queryProcessor::queryProcessor(const char* stopList, const char* pathName, const
         cin >> choice;
         if (choice == 1)
         {
-            cout << endl << "Option 1 Selected ---" << endl;
-            cout << "\t 1 : Load index into an AVL Tree" << endl;
-            cout << "\t 2 : Load index into a Hash Table" << endl;
-            cout << "Please choose an option by entering the corresponding number: ";
-            cin >> option;
-            if (option == 1)
+            bool judge = checkFile(indexFile);
+            if (judge == true)
             {
-                cout << "AVL Tree" << endl;
-                preference = true;
-                searchStructure(preference, stopList, indexFile, pathName);
-            }
-            else if (option == 2)
-            {
-                cout << "Hash Table" << endl;
-                preference = false;
-                //searchStructure(preference, stopList, indexFile);
+                cout << "There is no index" << endl;
+                cout << "Create an index using Maintence Mode" << endl;
             }
             else
             {
-                cout << "Returning to Query Menu" << endl;
+                cout << endl << "Option 1 Selected --- Query" << endl;
+                cout << "\t 1 : Load index into an AVL Tree" << endl;
+                cout << "\t 2 : Load index into a Hash Table" << endl;
+                cout << "Please choose an option by entering the corresponding number: ";
+                cin >> option;
+                if (option == 1)
+                {
+                    cout << "AVL Tree" << endl;
+                    preference = true;
+                    searchStructure(preference, stopList, indexFile, pathName);
+                }
+                else if (option == 2)
+                {
+                    cout << "Hash Table" << endl;
+                    preference = false;
+                    searchStructure(preference, stopList, indexFile, pathName);
+                }
+                else
+                {
+                    cout << "Returning to Query Menu" << endl;
+                }
             }
         }
         else if (choice == 2)
@@ -62,26 +71,35 @@ queryProcessor::queryProcessor(const char* stopList, const char* pathName, const
             cin >> choice;
             if (choice == 1)
             {
-                cout << endl << "Option 1 Selected --- Query" << endl;
-                cout << "\t 1 : Load index into an AVL Tree" << endl;
-                cout << "\t 2 : Load index into a Hash Table" << endl;
-                cout << "Please choose an option by entering the corresponding number: ";
-                cin >> option;
-                if (option == 1)
+                bool judge = checkFile(indexFile);
+                if (judge == true)
                 {
-                    cout << "AVL Tree" << endl;
-                    preference = true;
-                    searchStructure(preference, stopList, indexFile, pathName);
-                }
-                else if (option == 2)
-                {
-                    cout << "Hash Table" << endl;
-                    preference = false;
-                    //searchStructure(preference, stopList, indexFile);
+                    cout << "There is no index" << endl;
+                    cout << "Create an index using Maintence Mode" << endl;
                 }
                 else
                 {
-                    cout << "Returning to Query Menu" << endl;
+                    cout << endl << "Option 1 Selected --- Query" << endl;
+                    cout << "\t 1 : Load index into an AVL Tree" << endl;
+                    cout << "\t 2 : Load index into a Hash Table" << endl;
+                    cout << "Please choose an option by entering the corresponding number: ";
+                    cin >> option;
+                    if (option == 1)
+                    {
+                        cout << "AVL Tree" << endl;
+                        preference = true;
+                        searchStructure(preference, stopList, indexFile, pathName);
+                    }
+                    else if (option == 2)
+                    {
+                        cout << "Hash Table" << endl;
+                        preference = false;
+                        searchStructure(preference, stopList, indexFile, pathName);
+                    }
+                    else
+                    {
+                        cout << "Returning to Query Menu" << endl;
+                    }
                 }
             }
             else if (choice == 2)
@@ -116,6 +134,26 @@ void queryProcessor::searchStructure(bool preference, const char* stopList, cons
     }
     else
     {
-        //iHandle.searchHash(searchTerms, stopList, indexFile);
+        iHandle.searchHash(searchTerms, stopList, indexFile, pathName);
+    }
+}
+
+bool queryProcessor::checkFile(const char* indexFile)
+{
+    fileInOut.open(indexFile, ios::in);
+    {
+        if(!fileInOut)
+        {
+            cout << indexFile << " : File did not open" << endl;
+            exit(EXIT_FAILURE);
+        }
+       int next = fileInOut.peek();
+       if (next == EOF)
+       {
+           fileInOut.close();
+           return true;
+       }
+       fileInOut.close();
+       return false;
     }
 }

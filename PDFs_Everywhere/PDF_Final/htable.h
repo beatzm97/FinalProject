@@ -4,10 +4,35 @@
 
 #include <iostream>
 #include <string>
-#include "avltree.h"
+#include <vector>
+#include "avltreelayered.h"
+#include <fstream>
 using namespace std;
 
-class hashT
+class hTable
+{
+private:
+    vector<avlTreeLayered<string>*> table;
+
+    unsigned int tableSize;
+    unsigned int hashFunction(string);
+
+    void clearTable();
+    void copy(hTable&);
+
+public:
+    hTable();
+    hTable(string, string);
+    hTable(hTable&);
+    ~hTable();
+    void insert(string, string);
+    bool search(string);
+    hTable& operator =(hTable&);
+    void innerInfo(vector<pair <int, string>>&, string);
+    void indexInfo(fstream&);
+};
+
+/*class hashT
 {
 private:
     class hashNode
@@ -43,6 +68,6 @@ public:
 
     void printContents();
     hashT& operator=(hashT& rhs);
-};
+};*/
 
 #endif // HASHT_H

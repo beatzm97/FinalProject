@@ -82,10 +82,3 @@ void searchEngine::parse(const char* stopList, const char* pathName, const char*
     TextExtractor docParse;
     docParse.stopWords(stopList, pathName, indexFile);
 }
-
-
-/*void searchEngine::searchStats(const char* indexFile)
-{
-    indexHandler iHandle;
-    iHandle.searchStats(indexFile);
-}*/

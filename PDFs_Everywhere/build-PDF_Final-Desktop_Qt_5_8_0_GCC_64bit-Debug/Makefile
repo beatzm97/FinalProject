@@ -53,23 +53,23 @@ SOURCES       = ../PDF_Final/main.cpp \
 		../PDF_Final/stopwords.cpp \
 		../PDF_Final/textextractor.cpp \
 		../PDF_Final/murmurhash2.cpp \
-		../PDF_Final/hasht.cpp \
 		../PDF_Final/porter2_stemmer.cpp \
 		../PDF_Final/indexhandler.cpp \
 		../PDF_Final/searchEngine.cpp \
 		../PDF_Final/queryprocessor.cpp \
-		../PDF_Final/maintenancemode.cpp 
+		../PDF_Final/maintenancemode.cpp \
+		../PDF_Final/htable.cpp 
 OBJECTS       = main.o \
 		tests.o \
 		stopwords.o \
 		textextractor.o \
 		murmurhash2.o \
-		hasht.o \
 		porter2_stemmer.o \
 		indexhandler.o \
 		searchEngine.o \
 		queryprocessor.o \
-		maintenancemode.o
+		maintenancemode.o \
+		htable.o
 DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/unix.conf \
 		/opt/Qt/5.8/gcc_64/mkspecs/common/linux.conf \
@@ -213,30 +213,27 @@ DIST          = /opt/Qt/5.8/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt/5.8/gcc_64/mkspecs/features/lex.prf \
 		../PDF_Final/PDF_Final.pro catch.hpp \
 		avltree.h \
-		myadjacencylist.h \
-		mylinkedlist.h \
 		textextractor.h \
 		avltreelayered.h \
 		murmurhash2.h \
-		hashtable.h \
-		hasht.h \
 		porter2_stemmer.h \
 		string_view.h \
 		hash.h \
 		searchEngine.h \
 		indexhandler.h \
 		queryprocessor.h \
-		maintenancemode.h ../PDF_Final/main.cpp \
+		maintenancemode.h \
+		htable.h ../PDF_Final/main.cpp \
 		../PDF_Final/tests.cpp \
 		../PDF_Final/stopwords.cpp \
 		../PDF_Final/textextractor.cpp \
 		../PDF_Final/murmurhash2.cpp \
-		../PDF_Final/hasht.cpp \
 		../PDF_Final/porter2_stemmer.cpp \
 		../PDF_Final/indexhandler.cpp \
 		../PDF_Final/searchEngine.cpp \
 		../PDF_Final/queryprocessor.cpp \
-		../PDF_Final/maintenancemode.cpp
+		../PDF_Final/maintenancemode.cpp \
+		../PDF_Final/htable.cpp
 QMAKE_TARGET  = PDF_Final
 DESTDIR       = 
 TARGET        = PDF_Final
@@ -578,23 +575,22 @@ compiler_clean:
 
 main.o: ../PDF_Final/main.cpp ../PDF_Final/catch.hpp \
 		../PDF_Final/searchEngine.h \
-		../PDF_Final/avltree.h \
-		../PDF_Final/avltreelayered.h \
 		../PDF_Final/textextractor.h \
+		../PDF_Final/avltree.h \
 		../PDF_Final/porter2_stemmer.h \
 		../PDF_Final/string_view.h \
 		../PDF_Final/hash.h \
+		../PDF_Final/avltreelayered.h \
 		../PDF_Final/indexhandler.h \
+		../PDF_Final/htable.h \
 		../PDF_Final/queryprocessor.h \
-		../PDF_Final/maintenancemode.h \
-		../PDF_Final/mylinkedlist.h \
-		../PDF_Final/myadjacencylist.h
+		../PDF_Final/maintenancemode.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../PDF_Final/main.cpp
 
 tests.o: ../PDF_Final/tests.cpp ../PDF_Final/catch.hpp \
 		../PDF_Final/avltree.h \
 		../PDF_Final/avltreelayered.h \
-		../PDF_Final/hasht.h
+		../PDF_Final/htable.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tests.o ../PDF_Final/tests.cpp
 
 stopwords.o: ../PDF_Final/stopwords.cpp ../PDF_Final/stopwords.h \
@@ -607,15 +603,12 @@ textextractor.o: ../PDF_Final/textextractor.cpp ../PDF_Final/textextractor.h \
 		../PDF_Final/string_view.h \
 		../PDF_Final/hash.h \
 		../PDF_Final/avltreelayered.h \
-		../PDF_Final/indexhandler.h
+		../PDF_Final/indexhandler.h \
+		../PDF_Final/htable.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o textextractor.o ../PDF_Final/textextractor.cpp
 
 murmurhash2.o: ../PDF_Final/murmurhash2.cpp ../PDF_Final/murmurhash2.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o murmurhash2.o ../PDF_Final/murmurhash2.cpp
-
-hasht.o: ../PDF_Final/hasht.cpp ../PDF_Final/hasht.h \
-		../PDF_Final/avltree.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o hasht.o ../PDF_Final/hasht.cpp
 
 porter2_stemmer.o: ../PDF_Final/porter2_stemmer.cpp ../PDF_Final/porter2_stemmer.h \
 		../PDF_Final/string_view.h \
@@ -624,6 +617,7 @@ porter2_stemmer.o: ../PDF_Final/porter2_stemmer.cpp ../PDF_Final/porter2_stemmer
 
 indexhandler.o: ../PDF_Final/indexhandler.cpp ../PDF_Final/indexhandler.h \
 		../PDF_Final/avltreelayered.h \
+		../PDF_Final/htable.h \
 		../PDF_Final/textextractor.h \
 		../PDF_Final/avltree.h \
 		../PDF_Final/porter2_stemmer.h \
@@ -632,22 +626,22 @@ indexhandler.o: ../PDF_Final/indexhandler.cpp ../PDF_Final/indexhandler.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o indexhandler.o ../PDF_Final/indexhandler.cpp
 
 searchEngine.o: ../PDF_Final/searchEngine.cpp ../PDF_Final/searchEngine.h \
-		../PDF_Final/avltree.h \
-		../PDF_Final/avltreelayered.h \
 		../PDF_Final/textextractor.h \
+		../PDF_Final/avltree.h \
 		../PDF_Final/porter2_stemmer.h \
 		../PDF_Final/string_view.h \
 		../PDF_Final/hash.h \
+		../PDF_Final/avltreelayered.h \
 		../PDF_Final/indexhandler.h \
+		../PDF_Final/htable.h \
 		../PDF_Final/queryprocessor.h \
-		../PDF_Final/maintenancemode.h \
-		../PDF_Final/mylinkedlist.h \
-		../PDF_Final/myadjacencylist.h
+		../PDF_Final/maintenancemode.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o searchEngine.o ../PDF_Final/searchEngine.cpp
 
 queryprocessor.o: ../PDF_Final/queryprocessor.cpp ../PDF_Final/queryprocessor.h \
 		../PDF_Final/indexhandler.h \
 		../PDF_Final/avltreelayered.h \
+		../PDF_Final/htable.h \
 		../PDF_Final/textextractor.h \
 		../PDF_Final/avltree.h \
 		../PDF_Final/porter2_stemmer.h \
@@ -655,8 +649,20 @@ queryprocessor.o: ../PDF_Final/queryprocessor.cpp ../PDF_Final/queryprocessor.h 
 		../PDF_Final/hash.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o queryprocessor.o ../PDF_Final/queryprocessor.cpp
 
-maintenancemode.o: ../PDF_Final/maintenancemode.cpp ../PDF_Final/maintenancemode.h
+maintenancemode.o: ../PDF_Final/maintenancemode.cpp ../PDF_Final/maintenancemode.h \
+		../PDF_Final/textextractor.h \
+		../PDF_Final/avltree.h \
+		../PDF_Final/porter2_stemmer.h \
+		../PDF_Final/string_view.h \
+		../PDF_Final/hash.h \
+		../PDF_Final/avltreelayered.h \
+		../PDF_Final/indexhandler.h \
+		../PDF_Final/htable.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o maintenancemode.o ../PDF_Final/maintenancemode.cpp
+
+htable.o: ../PDF_Final/htable.cpp ../PDF_Final/htable.h \
+		../PDF_Final/avltreelayered.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o htable.o ../PDF_Final/htable.cpp
 
 ####### Install
 

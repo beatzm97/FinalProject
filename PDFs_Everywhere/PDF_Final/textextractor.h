@@ -32,8 +32,8 @@ class TextExtractor {
     TextExtractor();
     virtual ~TextExtractor();
 
-    void stopWords(const char* stopFileIn, const char* pathIn, const char* indexFileIn);   // creates stopWordsList
-    string filter(string text, const char* fileName);
+    void stopWords(const char*, const char*, const char*);   // creates stopWordsList
+    string filter(string, const char*);
     void documentContents(string, const char*);
 
     void appendIndex(string, const char*, const char*, const char*);
